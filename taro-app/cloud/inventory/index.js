@@ -89,6 +89,43 @@ exports.main = async (event, context) => {
                 result = { success: false, error: `Unknown action: ${action}` }
         }
 
+        // --- 图片链接转换逻辑 (Web端兼容) ---
+        if (result && result.success && result.data) {
+            const fileList = []
+            const isArray = Array.isArray(result.data)
+            const items = isArray ? result.data : [result.data]
+
+            // 1. 收集所有 cloud:// 开头的图片 ID
+            items.forEach(item => {
+                if (item.image && item.image.startsWith('cloud://')) {
+                    fileList.push(item.image)
+                }
+            })
+
+            // 2. 批量换取临时链接 (有效期较长)
+            if (fileList.length > 0) {
+                const { fileList: tempFiles } = await cloud.getTempFileURL({
+                    fileList: fileList
+                })
+
+                // 3. 建立映射表
+                const urlMap = {}
+                tempFiles.forEach(f => {
+                    if (f.tempFileURL) {
+                        urlMap[f.fileID] = f.tempFileURL
+                    }
+                })
+
+                // 4. 替换原始数据中的链接
+                items.forEach(item => {
+                    if (item.image && urlMap[item.image]) {
+                        item.image = urlMap[item.image]
+                    }
+                })
+            }
+        }
+        // ------------------------------------
+
         // HTTP 触发返回格式
         if (event.body) {
             return {
