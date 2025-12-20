@@ -15,7 +15,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onSu
     const [loading, setLoading] = useState(false)
     const [form, setForm] = useState({
         modelNumber: '',
-        category: Category.EAR_STUD,
+        category: Category.EAR,
         specification: '',
         color: '',
         quantity: 0,
@@ -33,7 +33,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, onSu
     const resetForm = () => {
         setForm({
             modelNumber: '',
-            category: Category.EAR_STUD,
+            category: Category.EAR,
             specification: '',
             color: '',
             quantity: 0,

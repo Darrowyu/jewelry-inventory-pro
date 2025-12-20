@@ -39,6 +39,37 @@ export default function ProductDetail() {
         }
     }
 
+    // 删除商品
+    const handleDelete = () => {
+        Taro.showModal({
+            title: '确认删除',
+            content: `确定要删除商品"${item?.modelNumber}"吗？此操作不可恢复。`,
+            confirmColor: '#EF4444',
+            success: async (res) => {
+                if (res.confirm && id) {
+                    try {
+                        await inventoryService.delete(id)
+                        Taro.showToast({ title: '删除成功', icon: 'success' })
+                        setTimeout(() => Taro.navigateBack(), 1500)
+                    } catch (error) {
+                        console.error('删除失败:', error)
+                        Taro.showToast({ title: '删除失败', icon: 'error' })
+                    }
+                }
+            }
+        })
+    }
+
+    // 编辑商品
+    const handleEdit = () => {
+        Taro.navigateTo({ url: `/pages/add-product/index?id=${id}` })
+    }
+
+    // 新增交易
+    const handleAddTransaction = () => {
+        Taro.navigateTo({ url: `/pages/add-transaction/index?itemId=${id}` })
+    }
+
     if (loading || !item) {
         return (
             <View className='container'>
@@ -157,8 +188,14 @@ export default function ProductDetail() {
 
             {/* 底部按钮 */}
             <View className='detail-footer'>
-                <View className='btn btn-dark' onClick={() => Taro.navigateBack()}>
-                    <Text style={{ color: '#FFFFFF', fontSize: 28, fontWeight: 700 }}>返回列表</Text>
+                <View className='btn btn-outline' onClick={handleDelete}>
+                    <Text style={{ color: '#EF4444', fontSize: 26, fontWeight: 600 }}>删除</Text>
+                </View>
+                <View className='btn btn-secondary' onClick={handleEdit}>
+                    <Text style={{ color: '#374151', fontSize: 26, fontWeight: 600 }}>编辑</Text>
+                </View>
+                <View className='btn btn-primary' onClick={handleAddTransaction}>
+                    <Text style={{ color: '#FFFFFF', fontSize: 26, fontWeight: 600 }}>出入库</Text>
                 </View>
             </View>
         </View>

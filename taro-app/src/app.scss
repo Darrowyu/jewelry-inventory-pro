@@ -243,28 +243,6 @@ page {
     color: #9CA3AF;
 }
 
-// 浮动添加按钮
-.fab {
-    position: fixed;
-    right: 48px;
-    bottom: 200px;
-    width: 112px;
-    height: 112px;
-    background: #EC4899;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 20px 40px rgba(236, 72, 153, 0.3);
-    z-index: 100;
-}
-
-.fab-icon {
-    width: 56px;
-    height: 56px;
-    color: #FFFFFF;
-}
-
 // 空状态
 .empty {
     padding: 160px 0;

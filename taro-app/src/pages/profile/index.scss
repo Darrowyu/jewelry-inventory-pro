@@ -1,0 +1,293 @@
+.profile-page {
+    min-height: 100vh;
+    background: #FFFFFF;
+    padding: 32px;
+    padding-bottom: 200px;
+}
+
+/* 顶部标题 */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 48px;
+}
+
+.header-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #D1D5DB;
+    /* 浅灰色文字 */
+}
+
+.header-line {
+    flex: 1;
+    height: 2px;
+    background: #F3F4F6;
+}
+
+/* 个人信息卡片 */
+.user-card {
+    background: #111827;
+    border-radius: 48px;
+    padding: 48px;
+    color: #FFFFFF;
+    margin-bottom: 64px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(17, 24, 39, 0.15);
+}
+
+.card-top {
+    display: flex;
+    align-items: center;
+    margin-bottom: 48px;
+    position: relative;
+    z-index: 2;
+}
+
+.avatar {
+    width: 120px;
+    height: 120px;
+    background: #EC4899;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 32px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+}
+
+.avatar-icon {
+    font-size: 64px;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.username {
+    font-size: 36px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.pro-tag {
+    display: inline-block;
+    background: rgba(236, 72, 153, 0.2);
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(236, 72, 153, 0.4);
+}
+
+.tag-text {
+    font-size: 22px;
+    color: #F472B6;
+    font-weight: 600;
+}
+
+/* 装饰背景 */
+.bg-decoration {
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    opacity: 0.1;
+    transform: rotate(15deg);
+}
+
+.star-icon {
+    font-size: 160px;
+    color: #FFFFFF;
+}
+
+.card-divider {
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-bottom: 32px;
+}
+
+.card-bottom {
+    display: flex;
+    justify-content: space-between;
+}
+
+.info-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &.align-right {
+        align-items: flex-end;
+    }
+}
+
+.label {
+    font-size: 24px;
+    color: #9CA3AF;
+}
+
+.value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #FFFFFF;
+    font-family: 'DIN Alternate', sans-serif;
+}
+
+.status-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-icon {
+    font-size: 24px;
+    color: #10B981;
+    /* 绿色对勾 */
+}
+
+/* 模块标题 */
+.section {
+    margin-bottom: 64px;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #E5E7EB;
+    margin-bottom: 32px;
+    display: block;
+}
+
+/* 业务工具 */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.tool-item {
+    background: #FFFFFF;
+    border: 2px solid #F9FAFB;
+    border-radius: 32px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.02);
+}
+
+.tool-icon-bg {
+    width: 80px;
+    height: 80px;
+    background: #F9FAFB;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tool-icon {
+    font-size: 40px;
+    color: #6B7280;
+}
+
+.tool-name {
+    font-size: 26px;
+    font-weight: 600;
+    color: #4B5563;
+}
+
+/* 系统设置列表 */
+.settings-list {
+    background: #FFFFFF;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40px 0;
+    border-bottom: 2px solid #F9FAFB;
+
+    &.last {
+        border-bottom: none;
+    }
+}
+
+.item-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.item-icon {
+    font-size: 36px;
+    color: #9CA3AF;
+    width: 48px;
+    /* 固定宽度对齐 */
+    text-align: center;
+}
+
+.item-name {
+    font-size: 30px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.item-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.item-desc {
+    font-size: 26px;
+    color: #D1D5DB;
+    font-weight: 600;
+}
+
+.arrow {
+    font-size: 32px;
+    color: #E5E7EB;
+}
+
+/* 退出登录 */
+.logout-btn {
+    background: #FFFFFF;
+    border: 2px solid #F3F4F6;
+    border-radius: 24px;
+    height: 112px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 48px;
+}
+
+.logout-icon {
+    font-size: 32px;
+    color: #9CA3AF;
+}
+
+.logout-text {
+    font-size: 30px;
+    font-weight: 700;
+    color: #9CA3AF;
+}
+
+/* 版本信息 */
+.version-info {
+    text-align: center;
+    padding-bottom: 48px;
+}
+
+.version-info text {
+    font-size: 24px;
+    color: #E5E7EB;
+    font-weight: 700;
+    letter-spacing: 2px;
+}

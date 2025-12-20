@@ -1,8 +1,121 @@
+.container {
+    min-height: 100vh;
+    background: #FFFFFF;
+    padding-bottom: 200px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 32px 32px 16px;
+    background: #FFFFFF;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.logo {
+    width: 88px;
+    height: 88px;
+    background: #FDF2F8;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon {
+    font-size: 48px;
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.header-title {
+    font-size: 36px;
+    font-weight: 800;
+    color: #111827;
+    line-height: 1.2;
+}
+
+.header-subtitle {
+    font-size: 24px;
+    color: #6B7280;
+    margin-top: 4px;
+}
+
+.notification-btn {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #F3F4F6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bell-icon {
+    font-size: 32px;
+}
+
+/* 搜索框 */
+.search-box {
+    margin: 16px 32px 32px;
+    height: 96px;
+    background: #F9FAFB;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+}
+
+.search-icon {
+    font-size: 32px;
+    color: #9CA3AF;
+    margin-right: 16px;
+}
+
+.search-input {
+    flex: 1;
+    font-size: 28px;
+    color: #111827;
+}
+
+/* 页面标题 */
+.section-header {
+    margin: 0 32px;
+    font-size: 28px;
+    font-weight: 700;
+    color: #9CA3AF;
+    display: block;
+}
+
+.divider-line {
+    margin: 24px 32px 32px;
+    height: 2px;
+    background: #F3F4F6;
+}
+
+/* 主内容区域 */
+.main-content {
+    padding: 0 32px;
+}
+
+/* 盈利卡片 */
 .profit-card {
     background: #111827;
-    border-radius: 48px;
-    padding: 40px;
-    margin-bottom: 48px;
+    border-radius: 40px;
+    padding: 48px;
+    color: #FFFFFF;
+    margin-bottom: 32px;
+    box-shadow: 0 20px 40px rgba(17, 24, 39, 0.1);
 }
 
 .profit-header {
@@ -12,42 +125,44 @@
     margin-bottom: 32px;
 }
 
-.profit-icon {
-    font-size: 32px;
+.trend-icon {
+    font-size: 28px;
+    color: #EC4899;
 }
 
 .profit-label {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 28px;
+    font-weight: 600;
     color: #9CA3AF;
-    text-transform: uppercase;
-    letter-spacing: 4px;
 }
 
 .profit-value {
-    font-size: 56px;
-    font-weight: 700;
+    font-size: 72px;
+    font-weight: 800;
     color: #FFFFFF;
+    margin-bottom: 12px;
     display: block;
-    margin-bottom: 8px;
+    font-family: 'DIN Alternate', sans-serif;
 }
 
 .profit-desc {
-    font-size: 20px;
+    font-size: 24px;
     color: #6B7280;
-    display: block;
 }
 
+/* 收益列表 */
 .revenue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
     margin-bottom: 48px;
 }
 
-.revenue-item {
+.revenue-card {
     background: #FFFFFF;
-    border-radius: 40px;
-    border: 2px solid #F5F5F5;
+    border: 2px solid #F3F4F6;
+    border-radius: 32px;
     padding: 32px;
-    margin-bottom: 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -56,115 +171,94 @@
 .revenue-left {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 24px;
 }
 
-.revenue-icon {
-    width: 80px;
-    height: 80px;
+.currency-icon {
+    width: 88px;
+    height: 88px;
     background: #F9FAFB;
-    border-radius: 24px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 32px;
+    color: #9CA3AF;
+    font-family: 'DIN Alternate', sans-serif;
+}
+
+.revenue-info {
+    display: flex;
+    flex-direction: column;
 }
 
 .revenue-label {
-    font-size: 20px;
+    font-size: 24px;
     font-weight: 700;
     color: #9CA3AF;
-    text-transform: uppercase;
-    display: block;
     margin-bottom: 8px;
 }
 
 .revenue-value {
     font-size: 36px;
-    font-weight: 700;
+    font-weight: 800;
     color: #111827;
-    display: block;
+    font-family: 'DIN Alternate', sans-serif;
 }
 
-.revenue-arrow {
-    font-size: 48px;
+.arrow-right {
+    font-size: 32px;
     color: #E5E7EB;
 }
 
-.cost-card {
+/* 成本分析 */
+.cost-section {
     background: #FFFFFF;
+    border: 2px solid #F3F4F6;
     border-radius: 40px;
-    border: 2px solid #F5F5F5;
-    padding: 48px;
+    padding: 40px;
 }
 
 .cost-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 48px;
+    margin-bottom: 40px;
 }
 
 .cost-title {
-    font-size: 28px;
-    font-weight: 700;
+    font-size: 32px;
+    font-weight: 800;
     color: #111827;
 }
 
-.cost-bars {
-    margin-bottom: 48px;
+.calendar-icon {
+    font-size: 32px;
+    color: #E5E7EB;
 }
 
-.cost-bar-item {
-    margin-bottom: 32px;
+.cost-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 32px;
 }
 
-.cost-bar-header {
+.cost-grid-item {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
+    flex-direction: column;
 }
 
-.cost-bar-name {
-    font-size: 20px;
+.cost-name {
+    font-size: 24px;
     font-weight: 700;
     color: #9CA3AF;
+    margin-bottom: 8px;
 }
 
-.cost-bar-value {
-    font-size: 24px;
-    font-weight: 700;
+.cost-val {
+    font-size: 30px;
+    font-weight: 800;
     color: #111827;
-}
-
-.cost-bar-track {
-    height: 16px;
-    background: #F3F4F6;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.cost-bar-fill {
-    height: 100%;
-    border-radius: 8px;
-    transition: width 0.3s ease;
-}
-
-.cost-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 32px;
-    border-top: 2px solid #F3F4F6;
-}
-
-.cost-total-label {
-    font-size: 24px;
-    font-weight: 700;
-    color: #6B7280;
-}
-
-.cost-total-value {
-    font-size: 32px;
-    font-weight: 900;
-    color: #111827;
+    font-family: 'DIN Alternate', sans-serif;
 }

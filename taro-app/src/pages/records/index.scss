@@ -1,7 +1,193 @@
-.record-list {
-    padding-bottom: 32px;
+.page-container {
+    min-height: 100vh;
+    background: #FFFFFF;
 }
 
-.record-right {
-    text-align: right;
+.scroll-content {
+    height: 100vh;
+}
+
+/* 搜索框 */
+.search-box {
+    margin: 32px 32px 0;
+    height: 96px;
+    background: #F9FAFB;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+}
+
+.search-icon {
+    font-size: 32px;
+    color: #9CA3AF;
+    margin-right: 16px;
+}
+
+.search-input {
+    flex: 1;
+    font-size: 28px;
+    color: #111827;
+}
+
+/* Header */
+.section-header {
+    display: flex;
+    align-items: center;
+    margin: 48px 32px 32px;
+    gap: 24px;
+}
+
+.title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #E5E7EB;
+    /* 浅灰色标题 */
+}
+
+.line {
+    flex: 1;
+    height: 2px;
+    background: #F3F4F6;
+}
+
+/* 筛选 Tab */
+.filter-tabs {
+    display: flex;
+    gap: 24px;
+    padding: 0 32px 32px;
+}
+
+.tab {
+    padding: 12px 32px;
+    background: #F3F4F6;
+    border-radius: 20px;
+
+    text {
+        font-size: 26px;
+        font-weight: 600;
+        color: #9CA3AF;
+    }
+
+    &.active {
+        background: #F472B6;
+
+        text {
+            color: #FFFFFF;
+        }
+    }
+}
+
+/* 列表项 */
+.record-list {
+    padding: 0 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.record-item {
+    display: flex;
+    align-items: center;
+    padding: 32px;
+    background: #FFFFFF;
+    border: 2px solid #F9FAFB;
+    border-radius: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.icon-wrapper {
+    width: 88px;
+    height: 88px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 24px;
+
+    &.inbound {
+        background: #ECFDF5;
+
+        .type-icon {
+            color: #10B981;
+            transform: rotate(180deg);
+        }
+    }
+
+    &.outbound {
+        background: #FDF2F8;
+
+        .type-icon {
+            color: #EC4899;
+        }
+    }
+}
+
+.type-icon {
+    font-size: 36px;
+    font-weight: 800;
+}
+
+.info-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.item-code {
+    font-size: 30px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.sub-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.method,
+.date,
+.dot {
+    font-size: 24px;
+    color: #9CA3AF;
+    font-weight: 500;
+}
+
+.data-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.qty {
+    font-size: 30px;
+    font-weight: 800;
+
+    &.inbound {
+        color: #10B981;
+    }
+
+    &.outbound {
+        color: #EC4899;
+    }
+}
+
+.amount {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+    font-family: 'DIN Alternate', sans-serif;
+    font-style: italic;
+    /* 设计图中金额有斜体感 */
+}
+
+.loading-state,
+.empty-state {
+    text-align: center;
+    padding: 64px 0;
+    color: #9CA3AF;
+    font-size: 28px;
 }

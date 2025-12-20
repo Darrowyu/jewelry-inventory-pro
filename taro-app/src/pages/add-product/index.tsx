@@ -1,16 +1,22 @@
-import { useState } from 'react'
-import { View, Text, Input, Picker } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import { useState, useEffect } from 'react'
+import { View, Text, Input, Picker, Image } from '@tarojs/components'
+import Taro, { useRouter } from '@tarojs/taro'
 import { inventoryService } from '../../services/cloud'
+import { chooseImage, uploadImage } from '../../utils/upload'
 import { Category, Warehouse } from '../../types'
 import { CATEGORY_OPTIONS, WAREHOUSE_OPTIONS } from '../../constants'
 import './index.scss'
 
 export default function AddProduct() {
+    const router = useRouter()
+    const { id } = router.params
+    const isEdit = !!id
+
     const [loading, setLoading] = useState(false)
+    const [uploading, setUploading] = useState(false)
     const [form, setForm] = useState({
         modelNumber: '',
-        category: Category.EAR_STUD,
+        category: Category.EAR,
         specification: '',
         color: '',
         quantity: 0,
@@ -21,33 +27,83 @@ export default function AddProduct() {
         image: ''
     })
 
-    const updateField = (field: string, value: string | number) => {
-        setForm({ ...form, [field]: value })
+    useEffect(() => {
+        if (isEdit && id) {
+            loadProduct(id)
+            Taro.setNavigationBarTitle({ title: '编辑商品' })
+        }
+    }, [id])
+
+    const loadProduct = async (productId: string) => {
+        try {
+            const data = await inventoryService.get(productId)
+            setForm({
+                modelNumber: data.modelNumber,
+                category: data.category as Category,
+                specification: data.specification,
+                color: data.color,
+                quantity: data.quantity,
+                warehouse: data.warehouse as Warehouse,
+                costPrice: data.costPrice,
+                onlinePrice: data.onlinePrice,
+                offlinePrice: data.offlinePrice,
+                image: data.image || ''
+            })
+        } catch (error) {
+            console.error('加载商品失败:', error)
+            Taro.showToast({ title: '加载失败', icon: 'error' })
+        }
     }
 
+    const updateField = (field: string, value: string | number) => {
+        setForm(prev => ({ ...prev, [field]: value }))
+    }
+
+    const handleUpload = async () => {
+        try {
+            const tempFilePaths = await chooseImage(1)
+            if (tempFilePaths.length === 0) return
+
+            setUploading(true)
+            const fileID = await uploadImage(tempFilePaths[0])
+            updateField('image', fileID)
+            Taro.showToast({ title: '上传成功', icon: 'success' })
+        } catch (error) {
+            Taro.showToast({ title: '上传失败', icon: 'error' })
+        } finally {
+            setUploading(false)
+        }
+    }
+
+    // ...handleSubmit logic remains same...
     const handleSubmit = async () => {
         if (!form.modelNumber) {
             Taro.showToast({ title: '请填写款号', icon: 'none' })
             return
         }
-        if (form.quantity <= 0) {
+        if (!isEdit && form.quantity <= 0) {
             Taro.showToast({ title: '请填写数量', icon: 'none' })
             return
         }
 
         try {
             setLoading(true)
-            await inventoryService.add({
-                ...form,
-                priceLogs: []
-            })
-            Taro.showToast({ title: '添加成功', icon: 'success' })
+            if (isEdit && id) {
+                await inventoryService.update(id, form)
+                Taro.showToast({ title: '更新成功', icon: 'success' })
+            } else {
+                await inventoryService.add({
+                    ...form,
+                    priceLogs: []
+                })
+                Taro.showToast({ title: '添加成功', icon: 'success' })
+            }
             setTimeout(() => {
                 Taro.navigateBack()
             }, 1500)
         } catch (error) {
-            console.error('添加商品失败:', error)
-            Taro.showToast({ title: '添加失败', icon: 'error' })
+            console.error(isEdit ? '更新商品失败:' : '添加商品失败:', error)
+            Taro.showToast({ title: isEdit ? '更新失败' : '添加失败', icon: 'error' })
         } finally {
             setLoading(false)
         }
@@ -55,6 +111,20 @@ export default function AddProduct() {
 
     return (
         <View className='add-page'>
+            <View className='form-section'>
+                <Text className='section-title'>商品图片</Text>
+                <View className='image-uploader' onClick={handleUpload}>
+                    {form.image ? (
+                        <Image src={form.image} mode='aspectFill' className='uploaded-image' />
+                    ) : (
+                        <View className='upload-placeholder'>
+                            <Text className='upload-icon'>📷</Text>
+                            <Text className='upload-text'>{uploading ? '上传中...' : '点击上传图片'}</Text>
+                        </View>
+                    )}
+                </View>
+            </View>
+
             <View className='form-section'>
                 <Text className='section-title'>基本信息</Text>
 
@@ -107,14 +177,20 @@ export default function AddProduct() {
                 <Text className='section-title'>库存信息</Text>
 
                 <View className='form-item'>
-                    <Text className='form-label'>初始数量 *</Text>
+                    <Text className='form-label'>{isEdit ? '当前数量' : '初始数量 *'}</Text>
                     <Input
                         className='form-input'
                         type='number'
                         placeholder='0'
                         value={form.quantity ? String(form.quantity) : ''}
                         onInput={(e) => updateField('quantity', Number(e.detail.value))}
+                        disabled={isEdit}
                     />
+                    {isEdit && (
+                        <Text style={{ fontSize: 22, color: '#9CA3AF', marginTop: 8 }}>
+                            编辑模式下不能直接修改数量，请通过出入库操作
+                        </Text>
+                    )}
                 </View>
 
                 <View className='form-item'>
@@ -173,7 +249,7 @@ export default function AddProduct() {
             <View className='form-footer'>
                 <View className='btn btn-dark' onClick={handleSubmit}>
                     <Text style={{ color: '#FFFFFF', fontSize: 28, fontWeight: 700 }}>
-                        {loading ? '保存中...' : '保存商品'}
+                        {loading ? '保存中...' : (isEdit ? '更新商品' : '保存商品')}
                     </Text>
                 </View>
             </View>

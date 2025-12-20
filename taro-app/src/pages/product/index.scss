@@ -246,11 +246,27 @@
 }
 
 .detail-footer {
-    padding: 48px;
+    padding: 32px 48px;
     border-top: 2px solid #F5F5F5;
+    display: flex;
+    gap: 16px;
+    padding-bottom: calc(32px + env(safe-area-inset-bottom));
 }
 
 .detail-footer .btn {
-    width: 100%;
-    height: 96px;
+    flex: 1;
+    height: 88px;
+}
+
+.detail-footer .btn-outline {
+    background: #FEF2F2;
+    border: 2px solid #FECACA;
+}
+
+.detail-footer .btn-secondary {
+    background: #F3F4F6;
+}
+
+.detail-footer .btn-primary {
+    background: #EC4899;
 }

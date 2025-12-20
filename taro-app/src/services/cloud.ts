@@ -10,14 +10,14 @@ async function callCloud<T>(name: string, action: string, data?: any): Promise<T
         const res = await Taro.cloud.callFunction({
             name,
             data: { action, data }
-        }) as { result: CloudResponse<T> }
+        }) as unknown as { result: CloudResponse<T> }
 
         if (!res.result.success) {
             throw new Error(res.result.error || '云函数调用失败')
         }
         return res.result.data as T
     } else {
-        // H5环境通过HTTP调用（需要配置云函数HTTP触发器）
+        // H5环境通过HTTP调用
         const baseUrl = process.env.CLOUD_BASE_URL || ''
         const response = await fetch(`${baseUrl}/api/${name}`, {
             method: 'POST',
@@ -61,7 +61,7 @@ export const transactionService = {
         return callCloud<TransactionRecord[]>('transactions', 'list', params)
     },
 
-    async add(record: Omit<TransactionRecord, '_id' | 'date'>): Promise<TransactionRecord> {
+    async add(record: Omit<TransactionRecord, '_id'>): Promise<TransactionRecord> {
         return callCloud<TransactionRecord>('transactions', 'add', record)
     },
 
@@ -80,7 +80,7 @@ export const costService = {
         return callCloud<CostItem[]>('costs', 'list')
     },
 
-    async add(item: Omit<CostItem, '_id' | 'date'>): Promise<CostItem> {
+    async add(item: Omit<CostItem, '_id' | 'createdAt'>): Promise<CostItem> {
         return callCloud<CostItem>('costs', 'add', item)
     },
 

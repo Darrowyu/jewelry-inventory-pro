@@ -50,7 +50,7 @@ export const transactionApi = {
     list: (params?: { type?: string; itemId?: string; limit?: number }) =>
         callApi<TransactionRecord[]>('transactions', 'list', params),
 
-    add: (record: Omit<TransactionRecord, '_id' | 'date'>) =>
+    add: (record: Omit<TransactionRecord, '_id'>) =>
         callApi<TransactionRecord>('transactions', 'add', record),
 
     getByItem: (itemId: string) =>

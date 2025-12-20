@@ -1,22 +1,32 @@
+.page-container {
+    min-height: 100vh;
+    background: #FFFFFF;
+}
+
+.scroll-content {
+    height: 100vh;
+}
+
+/* Header (复用 Finance 页风格) */
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 64px;
+    align-items: center;
+    padding: 32px 32px 16px;
+    background: #FFFFFF;
 }
 
 .header-left {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 24px;
 }
 
 .logo {
-    width: 96px;
-    height: 96px;
-    border-radius: 32px;
+    width: 88px;
+    height: 88px;
     background: #FDF2F8;
-    border: 2px solid #FCE7F3;
+    border-radius: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,45 +36,277 @@
     font-size: 48px;
 }
 
+.header-text {
+    display: flex;
+    flex-direction: column;
+}
+
 .header-title {
-    font-size: 48px;
+    font-size: 36px;
     font-weight: 800;
     color: #111827;
-    display: block;
+    line-height: 1.2;
 }
 
 .header-subtitle {
-    font-size: 22px;
+    font-size: 24px;
+    color: #6B7280;
+    margin-top: 4px;
+}
+
+.notification-btn {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #F3F4F6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bell-icon {
+    font-size: 32px;
+}
+
+/* 概览卡片 */
+.overview-cards {
+    display: flex;
+    gap: 24px;
+    padding: 32px;
+}
+
+.stat-card {
+    flex: 1;
+    padding: 32px;
+    border-radius: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 200px;
+
+    &.pink {
+        background: #FDF2F8;
+
+        .stat-label {
+            color: #EC4899;
+        }
+
+        .stat-num,
+        .stat-unit {
+            color: #DB2777;
+        }
+    }
+
+    &.gray {
+        background: #F9FAFB;
+
+        .stat-label {
+            color: #9CA3AF;
+        }
+
+        .stat-num,
+        .stat-currency {
+            color: #111827;
+        }
+    }
+}
+
+.stat-label {
+    font-size: 24px;
     font-weight: 700;
-    color: #9CA3AF;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    margin-top: 8px;
+    margin-bottom: 24px;
     display: block;
 }
 
-.stats-row {
-    display: flex;
-    gap: 32px;
-    margin-bottom: 64px;
-}
-
-.stat-bottom {
+.stat-value-row {
     display: flex;
     align-items: baseline;
+    gap: 8px;
 }
 
-.stat-value-small {
-    font-size: 40px;
-    font-weight: 900;
+.stat-num {
+    font-size: 56px;
+    font-weight: 800;
+    font-family: 'DIN Alternate', sans-serif;
+    line-height: 1;
+
+    &.sm {
+        font-size: 48px;
+    }
 }
 
-.product-list {
-    padding-bottom: 32px;
+.stat-unit {
+    font-size: 24px;
+    font-weight: 700;
 }
 
-.product-arrow {
-    font-size: 48px;
+.stat-currency {
+    font-size: 32px;
+    font-weight: 800;
+    font-family: 'DIN Alternate', sans-serif;
+}
+
+/* 搜索框 */
+.search-box {
+    margin: 0 32px 48px;
+    height: 96px;
+    background: #F9FAFB;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+}
+
+.search-icon {
+    font-size: 32px;
+    color: #9CA3AF;
+    margin-right: 16px;
+}
+
+.search-input {
+    flex: 1;
+    font-size: 28px;
+    color: #111827;
+}
+
+/* 分隔线 */
+.section-divider {
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    margin-bottom: 32px;
+    gap: 24px;
+}
+
+.line {
+    flex: 1;
+    height: 2px;
+    background: #F3F4F6;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #D1D5DB;
+    letter-spacing: 2px;
+}
+
+/* 库存列表 */
+.inventory-list {
+    padding: 0 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.inventory-card {
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    background: #FFFFFF;
+    border: 2px solid #F9FAFB;
+    border-radius: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.card-img {
+    width: 140px;
+    height: 140px;
+    border-radius: 24px;
+    background: #F3F4F6;
+    margin-right: 24px;
+}
+
+.card-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.info-main {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.item-code {
+    font-size: 30px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.item-desc {
+    font-size: 24px;
+    color: #D1D5DB;
+    font-weight: 600;
+}
+
+.location-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loc-icon {
+    font-size: 24px;
+    color: #F472B6;
+}
+
+.loc-text {
+    font-size: 24px;
+    font-weight: 600;
+    color: #9CA3AF;
+}
+
+.info-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.stock-badge {
+    background: #FDF2F8;
+    padding: 4px 12px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.stock-label {
+    font-size: 20px;
+    color: #F472B6;
+    font-weight: 600;
+}
+
+.stock-val {
+    font-size: 22px;
+    color: #DB2777;
+    font-weight: 800;
+}
+
+.price {
+    font-size: 32px;
+    font-weight: 800;
+    color: #111827;
+    font-family: 'DIN Alternate', sans-serif;
+}
+
+.arrow-right {
+    font-size: 32px;
     color: #E5E7EB;
-    padding-right: 8px;
+    margin-left: 24px;
+}
+
+.loading-state,
+.empty-state {
+    padding: 64px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    color: #9CA3AF;
 }
