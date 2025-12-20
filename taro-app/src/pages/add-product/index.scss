@@ -1,0 +1,83 @@
+.add-page {
+    min-height: 100vh;
+    background: #F8F9FA;
+    padding-bottom: 200px;
+}
+
+.form-section {
+    background: #FFFFFF;
+    margin: 24px;
+    border-radius: 32px;
+    padding: 32px;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 32px;
+    display: block;
+}
+
+.form-item {
+    margin-bottom: 24px;
+}
+
+.form-label {
+    font-size: 24px;
+    font-weight: 600;
+    color: #6B7280;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.form-input {
+    width: 100%;
+    height: 88px;
+    padding: 0 24px;
+    background: #F9FAFB;
+    border-radius: 16px;
+    font-size: 28px;
+    color: #111827;
+}
+
+.form-picker {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 88px;
+    padding: 0 24px;
+    background: #F9FAFB;
+    border-radius: 16px;
+    font-size: 28px;
+    color: #111827;
+}
+
+.picker-arrow {
+    font-size: 32px;
+    color: #D1D5DB;
+}
+
+.form-row {
+    display: flex;
+    gap: 24px;
+}
+
+.form-item.half {
+    flex: 1;
+}
+
+.form-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 32px;
+    background: #FFFFFF;
+    border-top: 2px solid #F3F4F6;
+}
+
+.form-footer .btn {
+    width: 100%;
+    height: 96px;
+}

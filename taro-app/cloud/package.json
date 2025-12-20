@@ -1,0 +1,6 @@
+{
+    "name": "jewelry-cloud-functions",
+    "version": "1.0.0",
+    "description": "珠宝库存管理云函数",
+    "private": true
+}

@@ -1,0 +1,53 @@
+.type-switch {
+    display: flex;
+    gap: 16px;
+    padding: 24px;
+    background: #FFFFFF;
+    margin: 24px;
+    margin-bottom: 0;
+    border-radius: 32px;
+}
+
+.type-btn {
+    flex: 1;
+    height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 24px;
+    font-size: 28px;
+    font-weight: 700;
+    background: #F3F4F6;
+    color: #9CA3AF;
+
+    &.active {
+        background: #EC4899;
+        color: #FFFFFF;
+    }
+
+    &.inbound.active {
+        background: #22C55E;
+    }
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    background: #FDF2F8;
+    border-radius: 16px;
+    margin-top: 16px;
+}
+
+.total-label {
+    font-size: 24px;
+    font-weight: 600;
+    color: #9CA3AF;
+}
+
+.total-value {
+    font-size: 36px;
+    font-weight: 800;
+    color: #EC4899;
+}

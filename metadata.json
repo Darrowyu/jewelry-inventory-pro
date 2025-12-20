@@ -1,0 +1,7 @@
+{
+  "name": "Jewelry Inventory Pro",
+  "description": "A modern, professional inventory and financial management system designed for jewelry businesses, featuring stock tracking, multi-channel sales records, and financial analytics.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+    "permissions": {
+        "openapi": []
+    },
+    "triggers": [
+        {
+            "name": "http",
+            "type": "http",
+            "config": {
+                "path": "/inventory",
+                "methods": [
+                    "GET",
+                    "POST",
+                    "PUT",
+                    "DELETE"
+                ]
+            }
+        }
+    ]
+}
