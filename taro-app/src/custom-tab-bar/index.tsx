@@ -4,6 +4,7 @@ import { Component } from 'react'
 import './index.scss'
 
 const tabs = [
+    { pagePath: '/pages/home/index', text: '首页', type: 'home' },
     { pagePath: '/pages/index/index', text: '库存', type: 'inventory' },
     { pagePath: '/pages/records/index', text: '明细', type: 'records' },
     { pagePath: '/pages/finance/index', text: '财务', type: 'finance' },
@@ -17,7 +18,6 @@ interface TabBarState {
 export default class CustomTabBar extends Component<{}, TabBarState> {
     state: TabBarState = { selected: this.getInitialSelected() }
 
-    // 根据当前路由获取初始选中索引
     getInitialSelected(): number {
         try {
             const pages = Taro.getCurrentPages()
@@ -34,11 +34,9 @@ export default class CustomTabBar extends Component<{}, TabBarState> {
     }
 
     componentDidShow() {
-        // 每次页面显示时同步选中状态
         this.syncSelectedByRoute()
     }
 
-    // 根据当前路由同步选中状态
     syncSelectedByRoute = () => {
         const pages = Taro.getCurrentPages()
         if (pages.length > 0) {
@@ -51,7 +49,6 @@ export default class CustomTabBar extends Component<{}, TabBarState> {
         }
     }
 
-    // 供页面通过 getTabBar().setSelected(index) 调用
     setSelected = (index: number) => {
         if (index !== this.state.selected) {
             this.setState({ selected: index })
@@ -59,9 +56,7 @@ export default class CustomTabBar extends Component<{}, TabBarState> {
     }
 
     handleTabClick = (index: number) => {
-        // 切换页面前先关闭弹窗，避免闪烁
         Taro.eventCenter.trigger('hideQuickAddSheet')
-        // 切换页面，让目标页面的 TabBar 实例通过 componentDidShow 自动同步状态
         if (index !== this.state.selected) {
             Taro.switchTab({ url: tabs[index].pagePath })
         }
@@ -71,7 +66,14 @@ export default class CustomTabBar extends Component<{}, TabBarState> {
         Taro.eventCenter.trigger('showQuickAddSheet')
     }
 
-    // 图标组件
+    // 首页图标
+    HomeIcon = ({ active }: { active: boolean }) => (
+        <View className={`icon-home ${active ? 'active' : ''}`}>
+            <View className='roof' />
+            <View className='house' />
+        </View>
+    )
+
     InventoryIcon = ({ active }: { active: boolean }) => (
         <View className={`icon-inventory ${active ? 'active' : ''}`}>
             <View className='cell' /><View className='cell' />
@@ -105,8 +107,9 @@ export default class CustomTabBar extends Component<{}, TabBarState> {
     )
 
     renderIcon = (type: string, active: boolean) => {
-        const { InventoryIcon, RecordsIcon, FinanceIcon, ProfileIcon } = this
+        const { HomeIcon, InventoryIcon, RecordsIcon, FinanceIcon, ProfileIcon } = this
         switch (type) {
+            case 'home': return <HomeIcon active={active} />
             case 'inventory': return <InventoryIcon active={active} />
             case 'records': return <RecordsIcon active={active} />
             case 'finance': return <FinanceIcon active={active} />
@@ -119,50 +122,71 @@ export default class CustomTabBar extends Component<{}, TabBarState> {
         const { selected } = this.state
 
         return (
-            <View className='custom-tabbar'>
-                {/* 库存 */}
-                <View
-                    className={`tab-item ${selected === 0 ? 'active' : ''}`}
-                    onClick={() => this.handleTabClick(0)}
-                >
-                    {this.renderIcon('inventory', selected === 0)}
-                    <Text className='tab-text'>库存</Text>
+            <View className='custom-tabbar-wrapper'>
+                {/* 悬浮 + 按钮 */}
+                <View className='fab-button' onClick={this.handleAddClick}>
+                    <Text className='fab-plus'>+</Text>
                 </View>
 
-                {/* 明细 */}
-                <View
-                    className={`tab-item ${selected === 1 ? 'active' : ''}`}
-                    onClick={() => this.handleTabClick(1)}
-                >
-                    {this.renderIcon('records', selected === 1)}
-                    <Text className='tab-text'>明细</Text>
-                </View>
-
-                {/* 中间+按钮 */}
-                <View className='center-tab' onClick={this.handleAddClick}>
-                    <View className='btn-circle'>
-                        <Text className='btn-plus'>+</Text>
+                {/* TabBar */}
+                <View className='custom-tabbar'>
+                    {/* 首页 */}
+                    <View
+                        className={`tab-item ${selected === 0 ? 'active' : ''}`}
+                        onClick={() => this.handleTabClick(0)}
+                    >
+                        <View className={`tab-icon-bg ${selected === 0 ? 'active' : ''}`}>
+                            {this.renderIcon('home', selected === 0)}
+                        </View>
+                        <Text className='tab-text'>首页</Text>
                     </View>
-                </View>
 
-                {/* 财务 */}
-                <View
-                    className={`tab-item ${selected === 2 ? 'active' : ''}`}
-                    onClick={() => this.handleTabClick(2)}
-                >
-                    {this.renderIcon('finance', selected === 2)}
-                    <Text className='tab-text'>财务</Text>
-                </View>
+                    {/* 库存 */}
+                    <View
+                        className={`tab-item ${selected === 1 ? 'active' : ''}`}
+                        onClick={() => this.handleTabClick(1)}
+                    >
+                        <View className={`tab-icon-bg ${selected === 1 ? 'active' : ''}`}>
+                            {this.renderIcon('inventory', selected === 1)}
+                        </View>
+                        <Text className='tab-text'>库存</Text>
+                    </View>
 
-                {/* 我的 */}
-                <View
-                    className={`tab-item ${selected === 3 ? 'active' : ''}`}
-                    onClick={() => this.handleTabClick(3)}
-                >
-                    {this.renderIcon('profile', selected === 3)}
-                    <Text className='tab-text'>我的</Text>
+                    {/* 明细 */}
+                    <View
+                        className={`tab-item ${selected === 2 ? 'active' : ''}`}
+                        onClick={() => this.handleTabClick(2)}
+                    >
+                        <View className={`tab-icon-bg ${selected === 2 ? 'active' : ''}`}>
+                            {this.renderIcon('records', selected === 2)}
+                        </View>
+                        <Text className='tab-text'>明细</Text>
+                    </View>
+
+                    {/* 财务 */}
+                    <View
+                        className={`tab-item ${selected === 3 ? 'active' : ''}`}
+                        onClick={() => this.handleTabClick(3)}
+                    >
+                        <View className={`tab-icon-bg ${selected === 3 ? 'active' : ''}`}>
+                            {this.renderIcon('finance', selected === 3)}
+                        </View>
+                        <Text className='tab-text'>财务</Text>
+                    </View>
+
+                    {/* 我的 */}
+                    <View
+                        className={`tab-item ${selected === 4 ? 'active' : ''}`}
+                        onClick={() => this.handleTabClick(4)}
+                    >
+                        <View className={`tab-icon-bg ${selected === 4 ? 'active' : ''}`}>
+                            {this.renderIcon('profile', selected === 4)}
+                        </View>
+                        <Text className='tab-text'>我的</Text>
+                    </View>
                 </View>
             </View>
         )
     }
 }
+

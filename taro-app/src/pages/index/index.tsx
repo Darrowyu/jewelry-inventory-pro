@@ -18,7 +18,7 @@ export default function Index() {
     // 同步 TabBar 选中状态
     const page = Taro.getCurrentInstance().page
     const tabBar = page?.getTabBar?.() as any
-    tabBar?.setSelected?.(0)
+    tabBar?.setSelected?.(1)
     // 监听弹窗显示/隐藏事件
     const showListener = () => setShowQuickAdd(true)
     const hideListener = () => setShowQuickAdd(false)

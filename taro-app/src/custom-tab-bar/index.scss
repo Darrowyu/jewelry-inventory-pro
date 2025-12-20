@@ -1,49 +1,16 @@
-.custom-tabbar {
+.custom-tabbar-wrapper {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 130px;
-    background: #FFFFFF;
-    border-radius: 32px 32px 0 0;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
-    display: flex;
-    align-items: flex-end;
-    padding-bottom: calc(16px + env(safe-area-inset-bottom));
     z-index: 999;
 }
 
-/* 5等分布局 */
-.tab-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    padding-bottom: 4px;
-}
-
-.tab-text {
-    font-size: 22px;
-    font-weight: 500;
-    color: #D1D5DB;
-    margin-top: 6px;
-}
-
-.tab-item.active .tab-text {
-    color: #EC4899;
-}
-
-/* 中间+按钮容器（也是flex:1，保持均匀） */
-.center-tab {
-    flex: 1;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 4px;
-}
-
-.btn-circle {
+/* 悬浮 + 按钮 */
+.fab-button {
+    position: absolute;
+    right: 32px;
+    bottom: calc(130px + env(safe-area-inset-bottom) + 24px);
     width: 96px;
     height: 96px;
     background: #EC4899;
@@ -52,15 +19,98 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 8px 24px rgba(236, 72, 153, 0.35);
-    margin-bottom: 20px;
+    z-index: 1000;
 }
 
-.btn-plus {
+.fab-plus {
     font-size: 52px;
     font-weight: 300;
     color: #FFFFFF;
     line-height: 1;
     margin-top: -4px;
+}
+
+.custom-tabbar {
+    height: 130px;
+    background: #FFFFFF;
+    border-radius: 32px 32px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 5 等分布局 */
+.tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 0;
+}
+
+/* 图标背景容器 */
+.tab-icon-bg {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+
+    &.active {
+        background: #FDF2F8;
+    }
+}
+
+.tab-text {
+    font-size: 22px;
+    font-weight: 500;
+    color: #9CA3AF;
+    margin-top: 4px;
+}
+
+.tab-item.active .tab-text {
+    color: #EC4899;
+}
+
+/* 首页图标 */
+.icon-home {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.icon-home .roof {
+    width: 0;
+    height: 0;
+    border-left: 14px solid transparent;
+    border-right: 14px solid transparent;
+    border-bottom: 10px solid #D1D5DB;
+    margin-bottom: -1px;
+}
+
+.icon-home.active .roof {
+    border-bottom-color: #EC4899;
+}
+
+.icon-home .house {
+    width: 20px;
+    height: 14px;
+    border: 2.5px solid #D1D5DB;
+    border-top: none;
+    border-radius: 0 0 3px 3px;
+    box-sizing: border-box;
+}
+
+.icon-home.active .house {
+    border-color: #EC4899;
 }
 
 /* 库存图标 */

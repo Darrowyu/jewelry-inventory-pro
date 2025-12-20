@@ -1,5 +1,6 @@
 export default {
   pages: [
+    'pages/home/index',
     'pages/index/index',
     'pages/records/index',
     'pages/finance/index',
@@ -20,6 +21,7 @@ export default {
     selectedColor: '#EC4899',
     backgroundColor: '#ffffff',
     list: [
+      { pagePath: 'pages/home/index', text: '首页' },
       { pagePath: 'pages/index/index', text: '库存' },
       { pagePath: 'pages/records/index', text: '明细' },
       { pagePath: 'pages/finance/index', text: '财务' },
