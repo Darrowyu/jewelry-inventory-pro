@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { View, Text } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { useDidShow } from '@tarojs/taro'
 import { transactionService, costService } from '../../services/cloud'
-import { Currency } from '../../types'
 import CostChart from '../../components/CostChart'
+import QuickAddSheet from '../../components/QuickAddSheet'
 import './index.scss'
 
 interface CostSummaryItem {
@@ -17,10 +17,24 @@ export default function Finance() {
     const [costData, setCostData] = useState<CostSummaryItem[]>([])
     const [totalCosts, setTotalCosts] = useState(0)
     const [loading, setLoading] = useState(true)
+    const [showQuickAdd, setShowQuickAdd] = useState(false)
 
-    useEffect(() => {
+    useDidShow(() => {
         loadData()
-    }, [])
+        // 同步 TabBar 选中状态
+        const page = Taro.getCurrentInstance().page
+        const tabBar = page?.getTabBar?.() as any
+        tabBar?.setSelected?.(2)
+        // 监听弹窗显示/隐藏事件
+        const showListener = () => setShowQuickAdd(true)
+        const hideListener = () => setShowQuickAdd(false)
+        Taro.eventCenter.on('showQuickAddSheet', showListener)
+        Taro.eventCenter.on('hideQuickAddSheet', hideListener)
+        return () => {
+            Taro.eventCenter.off('showQuickAddSheet', showListener)
+            Taro.eventCenter.off('hideQuickAddSheet', hideListener)
+        }
+    })
 
     const loadData = async () => {
         try {
@@ -30,7 +44,6 @@ export default function Finance() {
                 costService.getSummary()
             ])
             setSalesByCurrency(statsResult.salesByCurrency)
-            // 过滤掉值为0的成本项进行显示
             setCostData(costSummary.byCategory.filter(i => i.value > 0))
             setTotalCosts(costSummary.total)
         } catch (error) {
@@ -64,9 +77,7 @@ export default function Finance() {
                 {/* 收益列表 */}
                 <View className='revenue-list'>
                     {Object.entries(salesByCurrency).map(([curr, value]) => {
-                        // 过滤显示
                         if (value === 0 && curr !== 'CNY') return null
-                        const symbol = curr === 'CNY' ? '¥' : (curr === 'SGD' ? 'S$' : 'NT$')
                         return (
                             <View key={curr} className='revenue-card'>
                                 <View className='revenue-left'>
@@ -103,6 +114,16 @@ export default function Finance() {
                     </View>
                 </View>
             </View>
+
+            <QuickAddSheet
+                visible={showQuickAdd}
+                onClose={() => setShowQuickAdd(false)}
+                onSuccess={() => {
+                    loadData()
+                    setShowQuickAdd(false)
+                    Taro.showToast({ title: '登记成功' })
+                }}
+            />
         </View>
     )
 }

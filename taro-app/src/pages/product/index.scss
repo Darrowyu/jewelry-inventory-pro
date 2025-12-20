@@ -255,16 +255,20 @@
 
 .detail-footer .btn {
     flex: 1;
-    height: 88px;
+    height: 72px;
+    font-size: 28px;
+    border-radius: 36px;
 }
 
-.detail-footer .btn-outline {
+.detail-footer .btn-danger {
     background: #FEF2F2;
+    color: #EF4444;
     border: 2px solid #FECACA;
 }
 
 .detail-footer .btn-secondary {
     background: #F3F4F6;
+    color: #374151;
 }
 
 .detail-footer .btn-primary {

@@ -3,52 +3,94 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 
 exports.main = async (event, context) => {
-    const { action, data } = event
+    // 兼容 HTTP 触发和普通云函数调用
+    let action, data
+    if (event.body) {
+        const body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body
+        action = body.action
+        data = body.data
+    } else {
+        action = event.action
+        data = event.data
+    }
+
     const collection = db.collection('jewelry_costs')
 
     try {
+        let result
         switch (action) {
             case 'list': {
-                const result = await collection.orderBy('date', 'desc').get()
-                return { success: true, data: result.data }
+                const res = await collection.orderBy('date', 'desc').get()
+                result = { success: true, data: res.data }
+                break
             }
 
             case 'add': {
                 const item = { ...data, date: new Date().toISOString() }
-                const result = await collection.add({ data: item })
-                return { success: true, data: { _id: result._id, ...item } }
+                const res = await collection.add({ data: item })
+                result = { success: true, data: { _id: res._id, ...item } }
+                break
             }
 
             case 'update': {
                 const { id, ...updateData } = data
                 await collection.doc(id).update({ data: updateData })
-                return { success: true }
+                result = { success: true }
+                break
             }
 
             case 'delete': {
                 const { id } = data
                 await collection.doc(id).remove()
-                return { success: true }
+                result = { success: true }
+                break
             }
 
             case 'summary': { // 获取成本汇总
-                const result = await collection.get()
+                const res = await collection.get()
                 const summary = {}
                 let total = 0
-                result.data.forEach(cost => {
+                res.data.forEach(cost => {
                     if (!summary[cost.category]) {
-                        summary[cost.category] = { name: cost.name, value: 0 }
+                        summary[cost.category] = { name: cost.category, value: 0 }
                     }
-                    summary[cost.category].value += cost.value
-                    total += cost.value
+                    summary[cost.category].value += cost.amount || 0
+                    total += cost.amount || 0
                 })
-                return { success: true, data: { byCategory: Object.values(summary), total } }
+                result = { success: true, data: { byCategory: Object.values(summary), total } }
+                break
             }
 
             default:
-                return { success: false, error: `Unknown action: ${action}` }
+                result = { success: false, error: `Unknown action: ${action}` }
         }
+
+        // HTTP 触发返回格式
+        if (event.body) {
+            return {
+                statusCode: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type'
+                },
+                body: JSON.stringify(result)
+            }
+        }
+        return result
     } catch (error) {
-        return { success: false, error: error.message }
+        const errResult = { success: false, error: error.message }
+        if (event.body) {
+            return {
+                statusCode: 500,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify(errResult)
+            }
+        }
+        return errResult
     }
 }

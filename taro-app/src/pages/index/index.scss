@@ -7,6 +7,10 @@
     height: 100vh;
 }
 
+.inner-content {
+    min-height: 100vh;
+}
+
 /* Header (复用 Finance 页风格) */
 .header {
     display: flex;
@@ -169,12 +173,26 @@
     color: #111827;
 }
 
-/* 分隔线 */
-.section-divider {
+.clear-btn {
+    font-size: 36px;
+    color: #9CA3AF;
+    padding: 0 16px;
+}
+
+/* 分隔线 + 添加按钮行 */
+.section-header-row {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     padding: 0 32px;
     margin-bottom: 32px;
+    gap: 24px;
+}
+
+.section-divider {
+    flex: 1;
+    display: flex;
+    align-items: center;
     gap: 24px;
 }
 
@@ -189,6 +207,30 @@
     font-weight: 700;
     color: #D1D5DB;
     letter-spacing: 2px;
+    white-space: nowrap;
+}
+
+.add-product-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+    background: #EC4899;
+    border-radius: 20px;
+    flex-shrink: 0;
+}
+
+.add-icon {
+    font-size: 28px;
+    font-weight: 300;
+    color: #FFFFFF;
+    line-height: 1;
+}
+
+.add-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: #FFFFFF;
 }
 
 /* 库存列表 */

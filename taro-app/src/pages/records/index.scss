@@ -7,6 +7,10 @@
     height: 100vh;
 }
 
+.inner-content {
+    min-height: 100vh;
+}
+
 /* 搜索框 */
 .search-box {
     margin: 32px 32px 0;
@@ -28,6 +32,12 @@
     flex: 1;
     font-size: 28px;
     color: #111827;
+}
+
+.clear-btn {
+    font-size: 36px;
+    color: #9CA3AF;
+    padding: 0 16px;
 }
 
 /* Header */

@@ -188,14 +188,14 @@ export default function ProductDetail() {
 
             {/* 底部按钮 */}
             <View className='detail-footer'>
-                <View className='btn btn-outline' onClick={handleDelete}>
-                    <Text style={{ color: '#EF4444', fontSize: 26, fontWeight: 600 }}>删除</Text>
+                <View className='btn btn-danger' onClick={handleDelete}>
+                    <Text>删除</Text>
                 </View>
                 <View className='btn btn-secondary' onClick={handleEdit}>
-                    <Text style={{ color: '#374151', fontSize: 26, fontWeight: 600 }}>编辑</Text>
+                    <Text>编辑</Text>
                 </View>
                 <View className='btn btn-primary' onClick={handleAddTransaction}>
-                    <Text style={{ color: '#FFFFFF', fontSize: 26, fontWeight: 600 }}>出入库</Text>
+                    <Text>出入库</Text>
                 </View>
             </View>
         </View>

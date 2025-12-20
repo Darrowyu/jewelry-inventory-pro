@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { InventoryItem, Category, Warehouse } from '../../types'
 import { inventoryApi } from '../../services/api'
-import AddProductModal from '../modals/AddProductModal'
+import ProductModal from '../modals/ProductModal'
+import ProductDetailModal from '../modals/ProductDetailModal'
+import AddTransactionModal from '../modals/AddTransactionModal'
 
 const InventoryView: React.FC = () => {
     const [loading, setLoading] = useState(true)
@@ -9,7 +11,13 @@ const InventoryView: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('')
     const [filterCategory, setFilterCategory] = useState<string>('')
     const [filterWarehouse, setFilterWarehouse] = useState<string>('')
-    const [showAddModal, setShowAddModal] = useState(false)
+
+    // 弹窗状态
+    const [showProductModal, setShowProductModal] = useState(false)
+    const [showDetailModal, setShowDetailModal] = useState(false)
+    const [showTransactionModal, setShowTransactionModal] = useState(false)
+    const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
+    const [editItem, setEditItem] = useState<InventoryItem | null>(null)
 
     useEffect(() => {
         loadInventory()
@@ -41,6 +49,48 @@ const InventoryView: React.FC = () => {
         totalStock: filteredInventory.reduce((sum, item) => sum + item.quantity, 0),
         totalValue: filteredInventory.reduce((sum, item) => sum + (item.quantity * item.costPrice), 0),
         lowStock: filteredInventory.filter(item => item.quantity < 5).length
+    }
+
+    // 打开添加商品弹窗
+    const handleAddProduct = () => {
+        setEditItem(null)
+        setShowProductModal(true)
+    }
+
+    // 打开编辑商品弹窗
+    const handleEditProduct = (item: InventoryItem) => {
+        setEditItem(item)
+        setShowProductModal(true)
+        setShowDetailModal(false)
+    }
+
+    // 查看商品详情
+    const handleViewDetail = (item: InventoryItem) => {
+        setSelectedItem(item)
+        setShowDetailModal(true)
+    }
+
+    // 删除商品
+    const handleDeleteProduct = async (item: InventoryItem) => {
+        if (!confirm(`确定要删除商品"${item.modelNumber}"吗？此操作不可恢复。`)) {
+            return
+        }
+        try {
+            const itemId = item._id || item.id || ''
+            await inventoryApi.delete(itemId)
+            setShowDetailModal(false)
+            loadInventory()
+        } catch (error) {
+            console.error('删除商品失败:', error)
+            alert('删除失败')
+        }
+    }
+
+    // 打开出入库弹窗
+    const handleAddTransaction = (item: InventoryItem) => {
+        setSelectedItem(item)
+        setShowTransactionModal(true)
+        setShowDetailModal(false)
     }
 
     return (
@@ -82,7 +132,7 @@ const InventoryView: React.FC = () => {
                     </select>
                 </div>
                 <div className="toolbar-right">
-                    <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
+                    <button className="btn btn-primary" onClick={handleAddProduct}>
                         <span>+</span>
                         <span>添加商品</span>
                     </button>
@@ -148,7 +198,11 @@ const InventoryView: React.FC = () => {
                                 </tr>
                             ) : (
                                 filteredInventory.map(item => (
-                                    <tr key={item._id || item.id}>
+                                    <tr
+                                        key={item._id || item.id}
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => handleViewDetail(item)}
+                                    >
                                         <td>
                                             <img src={item.image} alt="" className="table-image" />
                                         </td>
@@ -172,10 +226,21 @@ const InventoryView: React.FC = () => {
                                         <td>¥{item.costPrice}</td>
                                         <td>¥{item.onlinePrice}</td>
                                         <td style={{ fontWeight: 600, color: '#EC4899' }}>¥{item.offlinePrice}</td>
-                                        <td>
+                                        <td onClick={e => e.stopPropagation()}>
                                             <div className="action-buttons">
-                                                <button className="btn btn-secondary btn-sm">编辑</button>
-                                                <button className="btn btn-sm" style={{ background: '#FEE2E2', color: '#DC2626' }}>删除</button>
+                                                <button
+                                                    className="btn btn-secondary btn-sm"
+                                                    onClick={() => handleEditProduct(item)}
+                                                >
+                                                    编辑
+                                                </button>
+                                                <button
+                                                    className="btn btn-sm"
+                                                    style={{ background: '#FEE2E2', color: '#DC2626' }}
+                                                    onClick={() => handleDeleteProduct(item)}
+                                                >
+                                                    删除
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -186,10 +251,30 @@ const InventoryView: React.FC = () => {
                 </div>
             </div>
 
-            <AddProductModal
-                isOpen={showAddModal}
-                onClose={() => setShowAddModal(false)}
+            {/* 商品编辑/添加弹窗 */}
+            <ProductModal
+                isOpen={showProductModal}
+                onClose={() => setShowProductModal(false)}
                 onSuccess={loadInventory}
+                editItem={editItem}
+            />
+
+            {/* 商品详情弹窗 */}
+            <ProductDetailModal
+                isOpen={showDetailModal}
+                onClose={() => setShowDetailModal(false)}
+                item={selectedItem}
+                onEdit={() => selectedItem && handleEditProduct(selectedItem)}
+                onDelete={() => selectedItem && handleDeleteProduct(selectedItem)}
+                onAddTransaction={() => selectedItem && handleAddTransaction(selectedItem)}
+            />
+
+            {/* 出入库弹窗 */}
+            <AddTransactionModal
+                isOpen={showTransactionModal}
+                onClose={() => setShowTransactionModal(false)}
+                onSuccess={loadInventory}
+                preselectedItemId={selectedItem?._id || selectedItem?.id}
             />
         </div>
     )
