@@ -49,10 +49,21 @@
     margin-bottom: 32px;
 }
 
+.greeting-box {
+    display: flex;
+    flex-direction: column;
+}
+
 .greeting {
     font-size: 40px;
     font-weight: 800;
     color: #fff;
+}
+
+.greeting-sub {
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 8px;
 }
 
 .flash-icon {

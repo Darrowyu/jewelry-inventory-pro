@@ -147,7 +147,10 @@ export default function Home() {
                     <View className='overview-card'>
                         <Text className='overview-tag'>今日概览</Text>
                         <View className='overview-header'>
-                            <Text className='greeting'>{getGreeting()}</Text>
+                            <View className='greeting-box'>
+                                <Text className='greeting'>{getGreeting()}</Text>
+                                <Text className='greeting-sub'>今天也是充满希望的一天</Text>
+                            </View>
                             <View className='flash-icon'>
                                 <Image className='flash-img' src={FlashIcon} mode='aspectFit' />
                             </View>
