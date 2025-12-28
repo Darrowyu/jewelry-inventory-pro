@@ -17,6 +17,21 @@ const DashboardView: React.FC = () => {
     const [salesByCurrency, setSalesByCurrency] = useState<Record<string, number>>({})
     const [totalCosts, setTotalCosts] = useState(0)
 
+    const getGreeting = () => {
+        const hour = new Date().getHours()
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}')
+        const name = currentUser.nickname || currentUser.username || '用户'
+        let greeting = ''
+        if (hour < 6) greeting = '凌晨好'
+        else if (hour < 9) greeting = '早上好'
+        else if (hour < 12) greeting = '上午好'
+        else if (hour < 14) greeting = '中午好'
+        else if (hour < 18) greeting = '下午好'
+        else if (hour < 22) greeting = '晚上好'
+        else greeting = '夜深了'
+        return `${greeting}，${name}`
+    }
+
     useEffect(() => {
         loadData()
     }, [])
@@ -54,6 +69,12 @@ const DashboardView: React.FC = () => {
 
     return (
         <div>
+            {/* 问候语 */}
+            <div className="greeting-banner">
+                <h2>{getGreeting()}</h2>
+                <p>今天也是充满希望的一天</p>
+            </div>
+
             {/* 统计卡片 */}
             <div className="stats-grid">
                 <div className="stat-card primary">

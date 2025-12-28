@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { View, Text, Image } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import QuickAddSheet from '../../components/QuickAddSheet'
@@ -21,6 +21,21 @@ import './index.scss'
 
 export default function Profile() {
     const [showQuickAdd, setShowQuickAdd] = useState(false)
+    const [openid, setOpenid] = useState<string>('')
+
+    useEffect(() => {
+        // 获取用户 openid（仅小程序环境）
+        if (process.env.TARO_ENV === 'weapp') {
+            Taro.cloud.callFunction({
+                name: 'user',
+                data: { action: 'getOpenid' }
+            }).then((res: any) => {
+                if (res.result?.success) {
+                    setOpenid(res.result.data.openid || '')
+                }
+            }).catch(() => {})
+        }
+    }, [])
 
     useDidShow(() => {
         /* 同步TabBar选中状态 */
@@ -87,6 +102,26 @@ export default function Profile() {
         })
     }
 
+    const handleShowOpenid = () => {
+        if (!openid) {
+            Taro.showToast({ title: '获取中...', icon: 'loading' })
+            return
+        }
+        Taro.showModal({
+            title: '用户标识 (OpenID)',
+            content: openid,
+            confirmText: '复制',
+            success: (res) => {
+                if (res.confirm) {
+                    Taro.setClipboardData({
+                        data: openid,
+                        success: () => Taro.showToast({ title: '已复制', icon: 'success' })
+                    })
+                }
+            }
+        })
+    }
+
     const handleHelp = () => {
         Taro.showModal({
             title: '使用帮助',
@@ -103,10 +138,28 @@ export default function Profile() {
     const handleLogout = () => {
         Taro.showModal({
             title: '退出登录',
-            content: '确定要退出登录吗？',
-            success: (res) => {
+            content: '确定要退出登录吗？退出后需要重新输入邀请码。',
+            success: async (res) => {
                 if (res.confirm) {
-                    Taro.showToast({ title: '已退出', icon: 'success' })
+                    Taro.showLoading({ title: '退出中...' })
+                    try {
+                        if (process.env.TARO_ENV === 'weapp') {
+                            await Taro.cloud.callFunction({
+                                name: 'user',
+                                data: { action: 'logout' }
+                            })
+                        }
+                        Taro.removeStorageSync('isLoggedIn')
+                        Taro.hideLoading()
+                        Taro.showToast({ title: '已退出', icon: 'success' })
+                        setTimeout(() => {
+                            Taro.redirectTo({ url: '/pages/login/index' })
+                        }, 1500)
+                    } catch (error) {
+                        Taro.hideLoading()
+                        Taro.removeStorageSync('isLoggedIn')
+                        Taro.redirectTo({ url: '/pages/login/index' })
+                    }
                 }
             }
         })
@@ -213,6 +266,19 @@ export default function Profile() {
                             <Text className='arrow'>›</Text>
                         </View>
                     </View>
+
+                    {process.env.TARO_ENV === 'weapp' && (
+                        <View className='setting-item' onClick={handleShowOpenid}>
+                            <View className='item-left'>
+                                <Image className='item-icon-img' src={PrivacyIcon} mode='aspectFit' />
+                                <Text className='item-name'>用户标识</Text>
+                            </View>
+                            <View className='item-right'>
+                                <Text className='item-desc'>{openid ? '点击查看' : '加载中...'}</Text>
+                                <Text className='arrow'>›</Text>
+                            </View>
+                        </View>
+                    )}
 
                     <View className='setting-item' onClick={handleHelp}>
                         <View className='item-left'>

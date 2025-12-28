@@ -22,9 +22,15 @@ export default function Home() {
     const [todayCount, setTodayCount] = useState(0)
     const [loading, setLoading] = useState(true)
     const [showQuickAdd, setShowQuickAdd] = useState(false)
+    const [username, setUsername] = useState('')
 
     useDidShow(() => {
         loadData()
+        // 获取当前登录用户
+        const currentUser = Taro.getStorageSync('currentUser')
+        if (currentUser) {
+            setUsername(currentUser.nickname || currentUser.username || '')
+        }
         /* 同步TabBar选中状态 */
         const page = Taro.getCurrentInstance().page
         if (page) {
@@ -122,9 +128,15 @@ export default function Home() {
 
     const getGreeting = () => {
         const hour = new Date().getHours()
-        if (hour < 12) return '早安'
-        if (hour < 18) return '午安'
-        return '晚安'
+        let greeting = ''
+        if (hour < 6) greeting = '凌晨好'
+        else if (hour < 9) greeting = '早上好'
+        else if (hour < 12) greeting = '上午好'
+        else if (hour < 14) greeting = '中午好'
+        else if (hour < 18) greeting = '下午好'
+        else if (hour < 22) greeting = '晚上好'
+        else greeting = '夜深了'
+        return `${greeting}，${username || '用户'}`
     }
 
     return (
@@ -135,7 +147,7 @@ export default function Home() {
                     <View className='overview-card'>
                         <Text className='overview-tag'>今日概览</Text>
                         <View className='overview-header'>
-                            <Text className='greeting'>{getGreeting()}，常老板</Text>
+                            <Text className='greeting'>{getGreeting()}</Text>
                             <View className='flash-icon'>
                                 <Image className='flash-img' src={FlashIcon} mode='aspectFit' />
                             </View>

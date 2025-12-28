@@ -3,7 +3,38 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const _ = db.command
 
+// 权限校验函数（使用数据库验证）
+async function checkPermission(event) {
+    if (event.body) {
+        return { allowed: true }
+    }
+    
+    const wxContext = cloud.getWXContext()
+    const openid = wxContext.OPENID
+    
+    if (!openid) {
+        return { allowed: false, error: '无法获取用户身份' }
+    }
+
+    const userRes = await db.collection('jewelry_users').where({
+        openid,
+        status: 'active'
+    }).get()
+
+    if (userRes.data.length === 0) {
+        return { allowed: false, openid, error: '未授权访问，请先登录' }
+    }
+    
+    return { allowed: true, openid, user: userRes.data[0] }
+}
+
 exports.main = async (event, context) => {
+    // 权限校验
+    const permission = await checkPermission(event)
+    if (!permission.allowed) {
+        return { success: false, error: permission.error }
+    }
+
     // 兼容 HTTP 触发和普通云函数调用
     let action, data
     if (event.body) {
