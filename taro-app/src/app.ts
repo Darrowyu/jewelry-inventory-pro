@@ -22,7 +22,11 @@ async function checkAuthStatus() {
 
     if (!res.result?.success || !res.result?.data?.isRegistered) {
       Taro.removeStorageSync('isLoggedIn')
+      Taro.removeStorageSync('currentUser')
       Taro.redirectTo({ url: '/pages/login/index' })
+    } else if (res.result?.data?.user) {
+      // 更新本地存储的用户信息
+      Taro.setStorageSync('currentUser', res.result.data.user)
     }
   } catch (error) {
     console.error('Auth check failed:', error)

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text, Image, Button } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import QuickAddSheet from '../../components/QuickAddSheet'
 // 个人信息图标
@@ -19,13 +19,55 @@ import LogoutIcon from '../../assets/icons/profile-logout.svg'
 import CheckIcon from '../../assets/icons/check.svg'
 import './index.scss'
 
+interface UserInfo {
+    username: string
+    nickname: string
+    createdAt: string
+    avatarUrl: string
+}
+
 export default function Profile() {
     const [showQuickAdd, setShowQuickAdd] = useState(false)
     const [openid, setOpenid] = useState<string>('')
+    const [userInfo, setUserInfo] = useState<UserInfo>({
+        username: '',
+        nickname: '',
+        createdAt: '',
+        avatarUrl: ''
+    })
 
     useEffect(() => {
-        // 获取用户 openid（仅小程序环境）
+        // 从 storage 获取当前用户信息
+        const currentUser = Taro.getStorageSync('currentUser')
+        if (currentUser) {
+            setUserInfo({
+                username: currentUser.username || '',
+                nickname: currentUser.nickname || currentUser.username || '',
+                createdAt: currentUser.createdAt || '',
+                avatarUrl: currentUser.avatarUrl || ''
+            })
+        }
+
+        // 获取用户 openid 和完整用户信息（仅小程序环境）
         if (process.env.TARO_ENV === 'weapp') {
+            Taro.cloud.callFunction({
+                name: 'user',
+                data: { action: 'checkAuth' }
+            }).then((res: any) => {
+                if (res.result?.success && res.result?.data?.user) {
+                    const user = res.result.data.user
+                    // 更新用户信息
+                    setUserInfo({
+                        username: user.username || '',
+                        nickname: user.nickname || user.username || '',
+                        createdAt: user.createdAt || '',
+                        avatarUrl: user.avatarUrl || ''
+                    })
+                    // 同步更新 storage
+                    Taro.setStorageSync('currentUser', user)
+                }
+            }).catch(() => {})
+
             Taro.cloud.callFunction({
                 name: 'user',
                 data: { action: 'getOpenid' }
@@ -122,6 +164,38 @@ export default function Profile() {
         })
     }
 
+    const handleChooseAvatar = async (e: any) => {
+        const avatarUrl = e.detail.avatarUrl
+        if (!avatarUrl) return
+
+        try {
+            Taro.showLoading({ title: '更新头像...' })
+            
+            // 更新云端用户头像
+            await Taro.cloud.callFunction({
+                name: 'user',
+                data: { 
+                    action: 'updateAvatar',
+                    data: { avatarUrl }
+                }
+            })
+
+            // 更新本地存储
+            const currentUser = Taro.getStorageSync('currentUser') || {}
+            currentUser.avatarUrl = avatarUrl
+            Taro.setStorageSync('currentUser', currentUser)
+
+            // 更新界面
+            setUserInfo(prev => ({ ...prev, avatarUrl }))
+            
+            Taro.hideLoading()
+            Taro.showToast({ title: '头像更新成功', icon: 'success' })
+        } catch (error) {
+            Taro.hideLoading()
+            Taro.showToast({ title: '更新失败', icon: 'none' })
+        }
+    }
+
     const handleHelp = () => {
         Taro.showModal({
             title: '使用帮助',
@@ -176,11 +250,27 @@ export default function Profile() {
             {/* 个人信息卡片 */}
             <View className='user-card'>
                 <View className='card-top'>
-                    <View className='avatar'>
-                        <Image className='avatar-icon-img' src={AvatarIcon} mode='aspectFit' />
-                    </View>
+                    {process.env.TARO_ENV === 'weapp' ? (
+                        <Button className='avatar-btn' openType='chooseAvatar' onChooseAvatar={handleChooseAvatar}>
+                            <View className='avatar'>
+                                {userInfo.avatarUrl ? (
+                                    <Image className='avatar-icon-img avatar-real' src={userInfo.avatarUrl} mode='aspectFill' />
+                                ) : (
+                                    <Image className='avatar-icon-img' src={AvatarIcon} mode='aspectFit' />
+                                )}
+                            </View>
+                        </Button>
+                    ) : (
+                        <View className='avatar'>
+                            {userInfo.avatarUrl ? (
+                                <Image className='avatar-icon-img avatar-real' src={userInfo.avatarUrl} mode='aspectFill' />
+                            ) : (
+                                <Image className='avatar-icon-img' src={AvatarIcon} mode='aspectFit' />
+                            )}
+                        </View>
+                    )}
                     <View className='user-info'>
-                        <Text className='username'>努力的小常</Text>
+                        <Text className='username'>{userInfo.nickname || userInfo.username || '用户'}</Text>
                         <View className='pro-tag'>
                             <Text className='tag-text'>PRO 专业版</Text>
                         </View>
@@ -195,7 +285,7 @@ export default function Profile() {
                 <View className='card-bottom'>
                     <View className='info-col'>
                         <Text className='label'>加入时间</Text>
-                        <Text className='value'>2024-03-01</Text>
+                        <Text className='value'>{userInfo.createdAt ? userInfo.createdAt.slice(0, 10) : '--'}</Text>
                     </View>
                     <View className='info-col align-right'>
                         <Text className='label'>数据同步</Text>

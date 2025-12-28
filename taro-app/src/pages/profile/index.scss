@@ -70,9 +70,27 @@
     border: 4px solid rgba(255, 255, 255, 0.1);
 }
 
+.avatar-btn {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: none;
+    line-height: 1;
+    
+    &::after {
+        border: none;
+    }
+}
+
 .avatar-icon-img {
     width: 56px;
     height: 56px;
+    
+    &.avatar-real {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+    }
 }
 
 .user-info {

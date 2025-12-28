@@ -53,7 +53,9 @@ exports.main = async (event, context) => {
                                 id: user._id,
                                 username: user.username,
                                 nickname: user.nickname,
-                                role: user.role
+                                role: user.role,
+                                createdAt: user.createdAt,
+                                avatarUrl: user.avatarUrl || ''
                             }
                         }
                     }
@@ -133,7 +135,15 @@ exports.main = async (event, context) => {
                     success: true,
                     data: { 
                         message: '注册成功',
-                        userId: userResult._id
+                        userId: userResult._id,
+                        user: {
+                            id: userResult._id,
+                            username,
+                            nickname: nickname || username,
+                            role: 'user',
+                            createdAt: now,
+                            avatarUrl: ''
+                        }
                     }
                 }
             }
@@ -170,7 +180,9 @@ exports.main = async (event, context) => {
                             id: user._id,
                             username: user.username,
                             nickname: user.nickname,
-                            role: user.role
+                            role: user.role,
+                            createdAt: user.createdAt,
+                            avatarUrl: user.avatarUrl || ''
                         }
                     }
                 }
@@ -180,6 +192,31 @@ exports.main = async (event, context) => {
             case 'logout': {
                 // 仅清除本地状态，不改变用户数据
                 return { success: true, data: { message: '已退出登录' } }
+            }
+
+            // 更新用户头像
+            case 'updateAvatar': {
+                const { avatarUrl } = data || {}
+                if (!openid) {
+                    return { success: false, error: '未登录' }
+                }
+                if (!avatarUrl) {
+                    return { success: false, error: '头像地址为空' }
+                }
+                
+                const userRes = await usersCollection.where({ openid, status: 'active' }).get()
+                if (userRes.data.length === 0) {
+                    return { success: false, error: '用户不存在' }
+                }
+                
+                await usersCollection.doc(userRes.data[0]._id).update({
+                    data: {
+                        avatarUrl,
+                        updatedAt: new Date().toISOString()
+                    }
+                })
+                
+                return { success: true, data: { message: '头像更新成功' } }
             }
 
             // ===== 以下为管理员功能 =====
