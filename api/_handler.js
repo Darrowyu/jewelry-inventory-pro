@@ -47,7 +47,7 @@ export async function handleCloudRequest(req, res, functionName) {
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action, data })
+            body: JSON.stringify({ action, data, _fromWeb: true })
         })
 
         const result = await response.json()

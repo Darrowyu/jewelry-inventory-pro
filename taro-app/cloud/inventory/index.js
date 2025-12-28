@@ -5,8 +5,8 @@ const _ = db.command
 
 // 权限校验函数（使用数据库验证）
 async function checkPermission(event) {
-    // HTTP 触发时跳过校验
-    if (event.body) {
+    // Web 端调用（通过 Vercel API）跳过 openid 校验
+    if (event._fromWeb || event.body) {
         return { allowed: true }
     }
     
