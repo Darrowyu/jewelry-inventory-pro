@@ -1,14 +1,28 @@
 .page-container {
     min-height: 100vh;
     background: #FFFFFF;
+    transform: translateZ(0);
 }
 
 .scroll-content {
     height: 100vh;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .inner-content {
     min-height: 100vh;
+    animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0.85;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* Header (复用 Finance 页风格) */
@@ -36,8 +50,9 @@
     justify-content: center;
 }
 
-.logo-icon {
-    font-size: 48px;
+.logo-icon-img {
+    width: 48px;
+    height: 48px;
 }
 
 .header-text {
@@ -68,8 +83,9 @@
     justify-content: center;
 }
 
-.bell-icon {
-    font-size: 32px;
+.bell-icon-img {
+    width: 36px;
+    height: 36px;
 }
 
 /* 概览卡片 */
@@ -161,10 +177,11 @@
     padding: 0 32px;
 }
 
-.search-icon {
-    font-size: 32px;
-    color: #9CA3AF;
+.search-icon-img {
+    width: 36px;
+    height: 36px;
     margin-right: 16px;
+    flex-shrink: 0;
 }
 
 .search-input {
@@ -290,9 +307,9 @@
     gap: 8px;
 }
 
-.loc-icon {
-    font-size: 24px;
-    color: #F472B6;
+.loc-icon-img {
+    width: 24px;
+    height: 24px;
 }
 
 .loc-text {

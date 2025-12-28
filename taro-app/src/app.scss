@@ -1,10 +1,41 @@
-// 微信小程序不支持外部字体导入，使用系统字体
-
+/* 微信小程序不支持外部字体导入，使用系统字体 */
 
 page {
     font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #F8F9FA;
+    background-color: #FFFFFF;
     color: #1A1A1A;
+}
+
+/* 页面内容淡入动画 */
+@keyframes fadeIn {
+    from {
+        opacity: 0.7;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* 页面容器通用样式 - 防止闪烁 */
+.page-container,
+.container,
+.home-container,
+.costs-page,
+.add-page,
+.detail-page {
+    min-height: 100vh;
+    background-color: #FFFFFF;
+    animation: fadeIn 0.15s ease-out;
+}
+
+/* 滚动容器优化 */
+.scroll-content,
+.home-scroll {
+    height: 100vh;
+    /* GPU加速，减少重绘闪烁 */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 .container {

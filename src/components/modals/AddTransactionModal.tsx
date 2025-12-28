@@ -103,6 +103,18 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             alert('请选择方式')
             return
         }
+        if (form.quantity <= 0) {
+            alert('数量必须大于0')
+            return
+        }
+
+        // 出库时前端预校验库存
+        if (type === 'outbound' && selectedItem) {
+            if (selectedItem.quantity < form.quantity) {
+                alert(`库存不足，当前库存 ${selectedItem.quantity} 件，无法出库 ${form.quantity} 件`)
+                return
+            }
+        }
 
         // 退货验证
         if (type === 'inbound' && form.method === InboundType.RETURN && !form.returnStatus) {
@@ -130,9 +142,9 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             resetForm()
             onSuccess()
             onClose()
-        } catch (error) {
+        } catch (error: any) {
             console.error('添加交易失败:', error)
-            alert('添加失败')
+            alert(error.message || '添加失败')
         } finally {
             setLoading(false)
         }

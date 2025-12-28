@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Category, Warehouse, InventoryItem } from '../../types'
 import { inventoryApi } from '../../services/api'
 
@@ -6,7 +6,7 @@ interface ProductModalProps {
     isOpen: boolean
     onClose: () => void
     onSuccess: () => void
-    editItem?: InventoryItem | null // 编辑时传入的商品
+    editItem?: InventoryItem | null
 }
 
 const CATEGORIES = Object.values(Category)
@@ -15,6 +15,8 @@ const WAREHOUSES = Object.values(Warehouse)
 const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSuccess, editItem }) => {
     const isEdit = !!editItem
     const [loading, setLoading] = useState(false)
+    const [imagePreview, setImagePreview] = useState<string>('')
+    const fileInputRef = useRef<HTMLInputElement>(null)
     const [form, setForm] = useState({
         modelNumber: '',
         category: Category.EAR,
@@ -42,10 +44,17 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSuccess,
                 offlinePrice: editItem.offlinePrice || 0,
                 image: editItem.image || ''
             })
+            setImagePreview(editItem.image || '')
         } else if (isOpen && !editItem) {
             resetForm()
         }
     }, [isOpen, editItem])
+
+    useEffect(() => {
+        if (form.image && form.image.startsWith('http')) {
+            setImagePreview(form.image)
+        }
+    }, [form.image])
 
     const updateField = (field: string, value: string | number) => {
         setForm({ ...form, [field]: value })
@@ -64,6 +73,33 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSuccess,
             offlinePrice: 0,
             image: ''
         })
+        setImagePreview('')
+    }
+
+    const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+
+        if (file.size > 2 * 1024 * 1024) {
+            alert('图片大小不能超过2MB')
+            return
+        }
+
+        const reader = new FileReader()
+        reader.onload = (event) => {
+            const dataUrl = event.target?.result as string
+            setImagePreview(dataUrl)
+            updateField('image', dataUrl)
+        }
+        reader.readAsDataURL(file)
+    }
+
+    const handleRemoveImage = () => {
+        setImagePreview('')
+        updateField('image', '')
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ''
+        }
     }
 
     const handleSubmit = async () => {
@@ -76,7 +112,9 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSuccess,
             setLoading(true)
             if (isEdit && editItem) {
                 const itemId = editItem._id || editItem.id || ''
-                await inventoryApi.update(itemId, form)
+                // 编辑模式下不提交quantity，避免覆盖通过出入库操作修改的库存
+                const { quantity, ...updateData } = form
+                await inventoryApi.update(itemId, updateData)
             } else {
                 await inventoryApi.add({
                     ...form,
@@ -104,6 +142,62 @@ const ProductModal: React.FC<ProductModalProps> = ({ isOpen, onClose, onSuccess,
                     <button className="modal-close" onClick={onClose}>×</button>
                 </div>
                 <div className="modal-body">
+                    {/* 商品图片 */}
+                    <div className="form-group" style={{ marginBottom: 20 }}>
+                        <label className="form-label">商品图片</label>
+                        <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                            <div style={{
+                                width: 100, height: 100, border: '2px dashed #E5E7EB', borderRadius: 8,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                overflow: 'hidden', background: '#F9FAFB', position: 'relative', flexShrink: 0
+                            }}>
+                                {imagePreview ? (
+                                    <>
+                                        <img src={imagePreview} alt="预览" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        <button
+                                            onClick={handleRemoveImage}
+                                            style={{
+                                                position: 'absolute', top: 4, right: 4, width: 20, height: 20,
+                                                borderRadius: '50%', border: 'none', background: 'rgba(0,0,0,0.5)',
+                                                color: 'white', cursor: 'pointer', fontSize: 12, lineHeight: 1
+                                            }}
+                                        >×</button>
+                                    </>
+                                ) : (
+                                    <span style={{ fontSize: 32, color: '#9CA3AF' }}>📷</span>
+                                )}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    ref={fileInputRef}
+                                    onChange={handleImageFileChange}
+                                    style={{ display: 'none' }}
+                                />
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    style={{ marginBottom: 8 }}
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    上传图片
+                                </button>
+                                <div style={{ fontSize: 12, color: '#9CA3AF' }}>支持JPG、PNG格式，不超过2MB</div>
+                                <div style={{ marginTop: 8 }}>
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        placeholder="或输入图片URL"
+                                        value={form.image.startsWith('data:') ? '' : form.image}
+                                        onChange={e => updateField('image', e.target.value)}
+                                        style={{ fontSize: 13 }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="form-row">
                         <div className="form-group">
                             <label className="form-label">款号 *</label>

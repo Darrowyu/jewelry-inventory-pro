@@ -1,0 +1,486 @@
+.costs-page {
+    min-height: 100vh;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 顶部导航 */
+.nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 48px 32px 24px;
+    background: #FFFFFF;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.back-btn {
+    width: 72px;
+    height: 72px;
+    background: #F9FAFB;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-icon {
+    font-size: 36px;
+    color: #374151;
+}
+
+.nav-title {
+    font-size: 34px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.placeholder {
+    width: 72px;
+}
+
+/* 滚动内容区 */
+.scroll-content {
+    flex: 1;
+    height: calc(100vh - 144px);
+}
+
+/* 总成本卡片 */
+.total-card {
+    margin: 0 32px 32px;
+    padding: 40px;
+    background: #111827;
+    border-radius: 32px;
+    box-shadow: 0 16px 32px rgba(17, 24, 39, 0.15);
+}
+
+.total-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.total-icon-img {
+    width: 28px;
+    height: 28px;
+}
+
+.total-label {
+    font-size: 26px;
+    font-weight: 600;
+    color: #9CA3AF;
+}
+
+.total-value {
+    font-size: 56px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 12px;
+    font-family: 'DIN Alternate', sans-serif;
+    display: block;
+}
+
+.total-desc {
+    font-size: 24px;
+    color: #6B7280;
+}
+
+/* 区块 */
+.section {
+    margin: 0 32px 32px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.section-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #9CA3AF;
+    flex-shrink: 0;
+}
+
+.section-line {
+    flex: 1;
+    height: 2px;
+    background: #F3F4F6;
+}
+
+/* 分类滚动 */
+.category-scroll {
+    margin: 0 -32px;
+    padding: 0 32px;
+    white-space: nowrap;
+}
+
+.category-list {
+    display: inline-flex;
+    gap: 16px;
+    padding-right: 32px;
+}
+
+.category-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 32px;
+    background: #F9FAFB;
+    border-radius: 20px;
+    min-width: 160px;
+}
+
+.category-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-bottom: 12px;
+}
+
+.category-name {
+    font-size: 24px;
+    color: #6B7280;
+    margin-bottom: 8px;
+}
+
+.category-amount {
+    font-size: 30px;
+    font-weight: 800;
+    color: #111827;
+    font-family: 'DIN Alternate', sans-serif;
+    margin-bottom: 4px;
+}
+
+.category-count {
+    font-size: 22px;
+    color: #9CA3AF;
+}
+
+/* 成本列表 */
+.cost-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.cost-item {
+    background: #FFFFFF;
+    border: 2px solid #F3F4F6;
+    border-radius: 24px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.cost-item.active {
+    border-color: #EC4899;
+    box-shadow: 0 8px 24px rgba(236, 72, 153, 0.1);
+}
+
+.cost-main {
+    display: flex;
+    align-items: center;
+    padding: 24px;
+    gap: 16px;
+}
+
+.cost-badge {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.badge-icon {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.cost-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.cost-name {
+    font-size: 28px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 6px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cost-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cost-category {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.cost-dot {
+    font-size: 22px;
+    color: #D1D5DB;
+}
+
+.cost-date {
+    font-size: 22px;
+    color: #9CA3AF;
+}
+
+.cost-amount {
+    font-size: 32px;
+    font-weight: 800;
+    color: #111827;
+    font-family: 'DIN Alternate', sans-serif;
+    flex-shrink: 0;
+}
+
+/* 操作按钮 */
+.cost-actions {
+    display: flex;
+    border-top: 1px solid #F3F4F6;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px;
+    font-size: 26px;
+    font-weight: 600;
+}
+
+.action-btn.edit {
+    color: #2563EB;
+    background: #EFF6FF;
+}
+
+.action-btn.delete {
+    color: #DC2626;
+    background: #FEF2F2;
+}
+
+.action-icon-img {
+    width: 24px;
+    height: 24px;
+}
+
+/* 空状态 */
+.empty-state {
+    padding: 80px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.empty-icon-img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+}
+
+.empty-state text {
+    font-size: 28px;
+    color: #6B7280;
+}
+
+.empty-hint {
+    font-size: 24px !important;
+    color: #9CA3AF !important;
+}
+
+/* 添加按钮 */
+.add-btn {
+    position: fixed;
+    bottom: 48px;
+    left: 32px;
+    right: 32px;
+    height: 100px;
+    background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    box-shadow: 0 12px 32px rgba(236, 72, 153, 0.35);
+    z-index: 100;
+}
+
+.add-icon {
+    font-size: 40px;
+    font-weight: 300;
+}
+
+/* 弹窗 */
+.modal-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 200;
+    display: flex;
+    align-items: flex-end;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    width: 100%;
+    background: #fff;
+    border-radius: 32px 32px 0 0;
+    padding: 32px;
+    padding-bottom: calc(48px + env(safe-area-inset-bottom));
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.modal-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.modal-close {
+    width: 56px;
+    height: 56px;
+    background: #F3F4F6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: #6B7280;
+}
+
+.form-item {
+    margin-bottom: 28px;
+}
+
+.form-label {
+    font-size: 26px;
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.form-input {
+    width: 100%;
+    height: 96px;
+    background: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: 20px;
+    padding: 0 28px;
+    font-size: 30px;
+    color: #111827;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus {
+    border-color: #EC4899;
+    background: #FFFFFF;
+}
+
+.form-picker {
+    width: 100%;
+    height: 96px;
+    background: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: 20px;
+    padding: 0 28px;
+    font-size: 30px;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.picker-arrow {
+    color: #9CA3AF;
+    font-size: 36px;
+    transform: rotate(90deg);
+}
+
+.submit-btn {
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    margin-top: 40px;
+    box-shadow: 0 8px 24px rgba(236, 72, 153, 0.25);
+}
+
+.submit-btn.disabled {
+    opacity: 0.6;
+    box-shadow: none;
+}

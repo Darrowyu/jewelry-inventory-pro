@@ -5,6 +5,10 @@ import { inventoryService } from '../../services/cloud'
 import { Product } from '../../types'
 import { CATEGORY_OPTIONS } from '../../constants'
 import QuickAddSheet from '../../components/QuickAddSheet'
+import SearchIcon from '../../assets/icons/search.svg'
+import LogoBoxIcon from '../../assets/icons/logo-box.svg'
+import NotificationIcon from '../../assets/icons/notification.svg'
+import LocationIcon from '../../assets/icons/location.svg'
 import './index.scss'
 
 export default function Index() {
@@ -15,11 +19,12 @@ export default function Index() {
 
   useDidShow(() => {
     loadInventory()
-    // 同步 TabBar 选中状态
+    /* 同步TabBar选中状态 */
     const page = Taro.getCurrentInstance().page
-    const tabBar = page?.getTabBar?.() as any
-    tabBar?.setSelected?.(1)
-    // 监听弹窗显示/隐藏事件
+    if (page) {
+      const tabBar = Taro.getTabBar<any>(page)
+      tabBar?.setSelected?.(1)
+    }
     const showListener = () => setShowQuickAdd(true)
     const hideListener = () => setShowQuickAdd(false)
     Taro.eventCenter.on('showQuickAddSheet', showListener)
@@ -30,9 +35,12 @@ export default function Index() {
     }
   })
 
-  const loadInventory = async () => {
+  const loadInventory = async (showLoading = false) => {
     try {
-      setLoading(true)
+      // 只在首次加载或强制刷新时显示loading
+      if (showLoading || inventory.length === 0) {
+        setLoading(true)
+      }
       const list = await inventoryService.list()
       setInventory(list)
     } catch (error) {
@@ -83,7 +91,7 @@ export default function Index() {
           <View className='header'>
             <View className='header-left'>
               <View className='logo'>
-                <Text className='logo-icon'>📦</Text>
+                <Image className='logo-icon-img' src={LogoBoxIcon} mode='aspectFit' />
               </View>
               <View className='header-text'>
                 <Text className='header-title'>库存管家</Text>
@@ -92,7 +100,7 @@ export default function Index() {
             </View>
             <View className='header-right'>
               <View className='notification-btn'>
-                <Text className='bell-icon'>🔔</Text>
+                <Image className='bell-icon-img' src={NotificationIcon} mode='aspectFit' />
               </View>
             </View>
           </View>
@@ -117,7 +125,7 @@ export default function Index() {
 
           {/* 搜索框 */}
           <View className='search-box'>
-            <Text className='search-icon'>🔍</Text>
+            <Image className='search-icon-img' src={SearchIcon} mode='aspectFit' />
             <Input
               className='search-input'
               placeholder='搜索款号、品类...'
@@ -166,7 +174,7 @@ export default function Index() {
                         {item.specification ? ` · ${item.specification}` : ''}
                       </Text>
                       <View className='location-tag'>
-                        <Text className='loc-icon'>📍</Text>
+                        <Image className='loc-icon-img' src={LocationIcon} mode='aspectFit' />
                         <Text className='loc-text'>{item.warehouse}</Text>
                       </View>
                     </View>

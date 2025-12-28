@@ -1,14 +1,28 @@
 .page-container {
     min-height: 100vh;
     background: #FFFFFF;
+    transform: translateZ(0);
 }
 
 .scroll-content {
     height: 100vh;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .inner-content {
     min-height: 100vh;
+    animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0.85;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* 搜索框 */
@@ -22,10 +36,11 @@
     padding: 0 32px;
 }
 
-.search-icon {
-    font-size: 32px;
-    color: #9CA3AF;
+.search-icon-img {
+    width: 36px;
+    height: 36px;
     margin-right: 16px;
+    flex-shrink: 0;
 }
 
 .search-input {
@@ -88,6 +103,27 @@
     }
 }
 
+.currency-tag {
+    padding: 12px 24px;
+    background: #EFF6FF;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+
+    text {
+        font-size: 26px;
+        font-weight: 600;
+        color: #2563EB;
+    }
+
+    .close {
+        font-size: 28px;
+        color: #93C5FD;
+    }
+}
+
 /* 列表项 */
 .record-list {
     padding: 0 32px;
@@ -117,25 +153,16 @@
 
     &.inbound {
         background: #ECFDF5;
-
-        .type-icon {
-            color: #10B981;
-            transform: rotate(180deg);
-        }
     }
 
     &.outbound {
         background: #FDF2F8;
-
-        .type-icon {
-            color: #EC4899;
-        }
     }
 }
 
-.type-icon {
-    font-size: 36px;
-    font-weight: 800;
+.type-icon-img {
+    width: 36px;
+    height: 36px;
 }
 
 .info-col {

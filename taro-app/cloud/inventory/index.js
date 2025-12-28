@@ -60,14 +60,53 @@ exports.main = async (event, context) => {
 
             case 'update': { // 更新商品
                 const { id, ...updateData } = data
-                updateData.updatedAt = new Date().toISOString()
+                const now = new Date().toISOString()
+                updateData.updatedAt = now
+
+                // 检测价格变动并记录日志
+                if (updateData.onlinePrice !== undefined || updateData.offlinePrice !== undefined) {
+                    const oldItem = await collection.doc(id).get()
+                    const oldData = oldItem.data
+                    const priceLogs = oldData.priceLogs || []
+
+                    if (updateData.onlinePrice !== undefined && updateData.onlinePrice !== oldData.onlinePrice) {
+                        priceLogs.push({
+                            date: now,
+                            type: 'online',
+                            oldPrice: oldData.onlinePrice || 0,
+                            newPrice: updateData.onlinePrice
+                        })
+                    }
+                    if (updateData.offlinePrice !== undefined && updateData.offlinePrice !== oldData.offlinePrice) {
+                        priceLogs.push({
+                            date: now,
+                            type: 'offline',
+                            oldPrice: oldData.offlinePrice || 0,
+                            newPrice: updateData.offlinePrice
+                        })
+                    }
+                    updateData.priceLogs = priceLogs
+                }
+
                 await collection.doc(id).update({ data: updateData })
                 result = { success: true }
                 break
             }
 
             case 'delete': { // 删除商品
-                const { id } = data
+                const { id, force } = data
+                // 检查是否有关联的交易记录
+                const transCollection = db.collection('jewelry_transactions')
+                const relatedTrans = await transCollection.where({ itemId: id }).count()
+                if (relatedTrans.total > 0 && !force) {
+                    result = { 
+                        success: false, 
+                        error: `该商品有 ${relatedTrans.total} 条关联交易记录，删除后记录将成为孤立数据。如确认删除请使用强制删除。`,
+                        hasRelatedRecords: true,
+                        relatedCount: relatedTrans.total
+                    }
+                    break
+                }
                 await collection.doc(id).remove()
                 result = { success: true }
                 break

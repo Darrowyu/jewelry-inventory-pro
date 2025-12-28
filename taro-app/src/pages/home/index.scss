@@ -1,15 +1,29 @@
 .home-container {
     min-height: 100vh;
-    background: #f8f9fa;
+    background: #FFFFFF;
+    transform: translateZ(0);
 }
 
 .home-scroll {
     height: 100vh;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .home-content {
     padding: 0 32px;
     padding-top: 24px;
+    animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0.85;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* 今日概览卡片 */
@@ -51,9 +65,9 @@
     justify-content: center;
 }
 
-.flash {
-    font-size: 32px;
-    color: #ec4899;
+.flash-img {
+    width: 32px;
+    height: 32px;
 }
 
 .overview-stats {
@@ -117,34 +131,27 @@
 .action-icon {
     width: 88px;
     height: 88px;
-    border-radius: 24px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #f3f4f6;
 
     &.scan {
-        .icon-text {
-            color: #1e293b;
-        }
+        background: #FFF7ED;
     }
 
     &.analysis {
-        .icon-text {
-            color: #1e293b;
-        }
+        background: #FAF5FF;
     }
 
     &.statement {
-        .icon-text {
-            color: #1e293b;
-        }
+        background: #EFF6FF;
     }
 }
 
-.icon-text {
-    font-size: 40px;
-    font-weight: 300;
+.action-icon-img {
+    width: 40px;
+    height: 40px;
 }
 
 .action-label {
@@ -174,14 +181,14 @@
     gap: 12px;
 }
 
-.warning-icon {
-    font-size: 28px;
-    color: #f59e0b;
+.warning-icon-img {
+    width: 28px;
+    height: 28px;
 }
 
-.activity-icon {
-    font-size: 28px;
-    color: #ec4899;
+.activity-icon-img {
+    width: 28px;
+    height: 28px;
 }
 
 .section-title {
@@ -283,16 +290,9 @@
     }
 }
 
-.badge-icon {
-    font-size: 28px;
-
-    .activity-badge.out & {
-        color: #ef4444;
-    }
-
-    .activity-badge.in & {
-        color: #22c55e;
-    }
+.badge-icon-img {
+    width: 24px;
+    height: 24px;
 }
 
 .activity-info {

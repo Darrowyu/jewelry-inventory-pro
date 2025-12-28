@@ -1,18 +1,34 @@
 import { useState } from 'react'
-import { View, Text } from '@tarojs/components'
+import { View, Text, Image } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import QuickAddSheet from '../../components/QuickAddSheet'
+// 个人信息图标
+import AvatarIcon from '../../assets/icons/profile-avatar.svg'
+import StarIcon from '../../assets/icons/profile-star.svg'
+// 业务工具图标
+import WarehouseIcon from '../../assets/icons/profile-warehouse.svg'
+import CategoryIcon from '../../assets/icons/profile-category.svg'
+import ExportIcon from '../../assets/icons/profile-export.svg'
+// 系统设置图标
+import CurrencyIcon from '../../assets/icons/profile-currency.svg'
+import SyncIcon from '../../assets/icons/profile-sync.svg'
+import PrivacyIcon from '../../assets/icons/profile-privacy.svg'
+import HelpIcon from '../../assets/icons/profile-help.svg'
+import ShareIcon from '../../assets/icons/profile-share.svg'
+import LogoutIcon from '../../assets/icons/profile-logout.svg'
+import CheckIcon from '../../assets/icons/check.svg'
 import './index.scss'
 
 export default function Profile() {
     const [showQuickAdd, setShowQuickAdd] = useState(false)
 
     useDidShow(() => {
-        // 同步 TabBar 选中状态
+        /* 同步TabBar选中状态 */
         const page = Taro.getCurrentInstance().page
-        const tabBar = page?.getTabBar?.() as any
-        tabBar?.setSelected?.(4)
-        // 监听弹窗显示/隐藏事件
+        if (page) {
+            const tabBar = Taro.getTabBar<any>(page)
+            tabBar?.setSelected?.(4)
+        }
         const showListener = () => setShowQuickAdd(true)
         const hideListener = () => setShowQuickAdd(false)
         Taro.eventCenter.on('showQuickAddSheet', showListener)
@@ -108,7 +124,7 @@ export default function Profile() {
             <View className='user-card'>
                 <View className='card-top'>
                     <View className='avatar'>
-                        <Text className='avatar-icon'>👤</Text>
+                        <Image className='avatar-icon-img' src={AvatarIcon} mode='aspectFit' />
                     </View>
                     <View className='user-info'>
                         <Text className='username'>努力的小常</Text>
@@ -117,7 +133,7 @@ export default function Profile() {
                         </View>
                     </View>
                     <View className='bg-decoration'>
-                        <Text className='star-icon'>✨</Text>
+                        <Image className='star-icon-img' src={StarIcon} mode='aspectFit' />
                     </View>
                 </View>
 
@@ -131,7 +147,7 @@ export default function Profile() {
                     <View className='info-col align-right'>
                         <Text className='label'>数据同步</Text>
                         <View className='status-row'>
-                            <Text className='status-icon'>✓</Text>
+                            <Image className='status-icon-img' src={CheckIcon} mode='aspectFit' />
                             <Text className='value'>已加密</Text>
                         </View>
                     </View>
@@ -144,19 +160,19 @@ export default function Profile() {
                 <View className='tools-grid'>
                     <View className='tool-item' onClick={handleWarehouse}>
                         <View className='tool-icon-bg'>
-                            <Text className='tool-icon'>🏢</Text>
+                            <Image className='tool-icon-img' src={WarehouseIcon} mode='aspectFit' />
                         </View>
                         <Text className='tool-name'>仓库管理</Text>
                     </View>
                     <View className='tool-item' onClick={handleCategory}>
                         <View className='tool-icon-bg'>
-                            <Text className='tool-icon'>🏷️</Text>
+                            <Image className='tool-icon-img' src={CategoryIcon} mode='aspectFit' />
                         </View>
                         <Text className='tool-name'>品类设置</Text>
                     </View>
                     <View className='tool-item' onClick={handleExport}>
                         <View className='tool-icon-bg'>
-                            <Text className='tool-icon'>📊</Text>
+                            <Image className='tool-icon-img' src={ExportIcon} mode='aspectFit' />
                         </View>
                         <Text className='tool-name'>导出报表</Text>
                     </View>
@@ -169,7 +185,7 @@ export default function Profile() {
                 <View className='settings-list'>
                     <View className='setting-item' onClick={handleCurrency}>
                         <View className='item-left'>
-                            <Text className='item-icon'>🌐</Text>
+                            <Image className='item-icon-img' src={CurrencyIcon} mode='aspectFit' />
                             <Text className='item-name'>汇率与币种设置</Text>
                         </View>
                         <View className='item-right'>
@@ -180,7 +196,7 @@ export default function Profile() {
 
                     <View className='setting-item' onClick={handleSync}>
                         <View className='item-left'>
-                            <Text className='item-icon'>🔄</Text>
+                            <Image className='item-icon-img' src={SyncIcon} mode='aspectFit' />
                             <Text className='item-name'>手动同步云端数据</Text>
                         </View>
                         <View className='item-right'>
@@ -190,7 +206,7 @@ export default function Profile() {
 
                     <View className='setting-item' onClick={handlePrivacy}>
                         <View className='item-left'>
-                            <Text className='item-icon'>🛡️</Text>
+                            <Image className='item-icon-img' src={PrivacyIcon} mode='aspectFit' />
                             <Text className='item-name'>数据安全与隐私协议</Text>
                         </View>
                         <View className='item-right'>
@@ -200,7 +216,7 @@ export default function Profile() {
 
                     <View className='setting-item' onClick={handleHelp}>
                         <View className='item-left'>
-                            <Text className='item-icon'>❓</Text>
+                            <Image className='item-icon-img' src={HelpIcon} mode='aspectFit' />
                             <Text className='item-name'>使用帮助与反馈</Text>
                         </View>
                         <View className='item-right'>
@@ -210,7 +226,7 @@ export default function Profile() {
 
                     <View className='setting-item last' onClick={handleShare}>
                         <View className='item-left'>
-                            <Text className='item-icon'>🔗</Text>
+                            <Image className='item-icon-img' src={ShareIcon} mode='aspectFit' />
                             <Text className='item-name'>推荐给同行</Text>
                         </View>
                         <View className='item-right'>
@@ -222,7 +238,7 @@ export default function Profile() {
 
             {/* 底部按钮 */}
             <View className='logout-btn' onClick={handleLogout}>
-                <Text className='logout-icon'>↪</Text>
+                <Image className='logout-icon-img' src={LogoutIcon} mode='aspectFit' />
                 <Text className='logout-text'>退出登录</Text>
             </View>
 

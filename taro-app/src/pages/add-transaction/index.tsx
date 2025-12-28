@@ -137,6 +137,17 @@ export default function AddTransaction() {
             return
         }
 
+        // 出库时前端预校验库存
+        if (type === 'outbound' && selectedItem) {
+            if (selectedItem.quantity < form.quantity) {
+                Taro.showToast({ 
+                    title: `库存不足，当前${selectedItem.quantity}件`, 
+                    icon: 'none' 
+                })
+                return
+            }
+        }
+
         // 退货验证
         if (type === 'inbound' && form.method === InboundType.RETURN) {
             if (!form.returnStatus) {
@@ -172,9 +183,9 @@ export default function AddTransaction() {
 
             Taro.showToast({ title: type === 'outbound' ? '出库成功' : '入库成功', icon: 'success' })
             setTimeout(() => Taro.navigateBack(), 1500)
-        } catch (error) {
+        } catch (error: any) {
             console.error('保存失败:', error)
-            Taro.showToast({ title: '保存失败', icon: 'error' })
+            Taro.showToast({ title: error.message || '保存失败', icon: 'none', duration: 3000 })
         } finally {
             setLoading(false)
         }

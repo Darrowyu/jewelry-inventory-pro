@@ -7,6 +7,22 @@ interface CloudResponse<T = unknown> {
     error?: string
 }
 
+// 统一ID字段：将_id复制到id，确保两个字段都可用
+function normalizeId<T>(data: T): T {
+    if (!data) return data
+    if (Array.isArray(data)) {
+        return data.map(item => normalizeId(item)) as T
+    }
+    if (typeof data === 'object' && data !== null) {
+        const obj = data as Record<string, unknown>
+        if (obj._id && !obj.id) {
+            obj.id = obj._id
+        }
+        return obj as T
+    }
+    return data
+}
+
 async function callApi<T>(endpoint: string, action: string, data?: unknown): Promise<T> {
     const response = await fetch(`${API_BASE_URL}/api/${endpoint}`, {
         method: 'POST',
@@ -24,7 +40,7 @@ async function callApi<T>(endpoint: string, action: string, data?: unknown): Pro
         throw new Error(result.error || 'API调用失败')
     }
 
-    return result.data as T
+    return normalizeId(result.data as T)
 }
 
 // 库存服务

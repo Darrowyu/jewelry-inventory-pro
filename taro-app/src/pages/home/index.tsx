@@ -5,6 +5,14 @@ import { inventoryService, transactionService } from '../../services/cloud'
 import { Product, TransactionRecord } from '../../types'
 import { CATEGORY_OPTIONS } from '../../constants'
 import QuickAddSheet from '../../components/QuickAddSheet'
+import ActionScanIcon from '../../assets/icons/action-scan.svg'
+import ActionAnalysisIcon from '../../assets/icons/action-analysis.svg'
+import ActionStatementIcon from '../../assets/icons/action-statement.svg'
+import FlashIcon from '../../assets/icons/flash.svg'
+import WarningIcon from '../../assets/icons/warning.svg'
+import TrendUpIcon from '../../assets/icons/trend-up.svg'
+import ArrowOutboundIcon from '../../assets/icons/arrow-outbound.svg'
+import ArrowInboundIcon from '../../assets/icons/arrow-inbound.svg'
 import './index.scss'
 
 export default function Home() {
@@ -17,9 +25,12 @@ export default function Home() {
 
     useDidShow(() => {
         loadData()
+        /* 同步TabBar选中状态 */
         const page = Taro.getCurrentInstance().page
-        const tabBar = page?.getTabBar?.() as any
-        tabBar?.setSelected?.(0) // 首页是 index 0
+        if (page) {
+            const tabBar = Taro.getTabBar<any>(page)
+            tabBar?.setSelected?.(0)
+        }
         const showListener = () => setShowQuickAdd(true)
         const hideListener = () => setShowQuickAdd(false)
         Taro.eventCenter.on('showQuickAddSheet', showListener)
@@ -30,9 +41,12 @@ export default function Home() {
         }
     })
 
-    const loadData = async () => {
+    const loadData = async (showLoading = false) => {
         try {
-            setLoading(true)
+            // 只在首次加载时显示loading，避免切换页面时闪烁
+            if (showLoading || (inventory.length === 0 && transactions.length === 0)) {
+                setLoading(true)
+            }
             const today = new Date().toISOString().split('T')[0]
             const [list, txList] = await Promise.all([
                 inventoryService.list(),
@@ -40,10 +54,13 @@ export default function Home() {
             ])
             setInventory(list)
             setTransactions(txList)
-            // 统计今日销售
-            const todayTx = txList.filter(t => t.date?.startsWith(today) && t.type === 'outbound')
-            setTodaySales(todayTx.reduce((sum, t) => sum + (t.finalAmount || t.amount || 0), 0))
-            setTodayCount(todayTx.length)
+            // 统计今日销售（出库金额 - 退货金额）
+            const todayOutbound = txList.filter(t => t.date?.startsWith(today) && t.type === 'outbound')
+            const todayReturns = txList.filter(t => t.date?.startsWith(today) && t.type === 'inbound' && t.method === '退货')
+            const outboundTotal = todayOutbound.reduce((sum, t) => sum + (t.finalAmount || t.amount || 0), 0)
+            const returnTotal = todayReturns.reduce((sum, t) => sum + (t.finalAmount || t.amount || 0), 0)
+            setTodaySales(outboundTotal - returnTotal)
+            setTodayCount(todayOutbound.length)
         } catch (error) {
             console.error('加载数据失败:', error)
             Taro.showToast({ title: '加载失败', icon: 'error' })
@@ -120,7 +137,7 @@ export default function Home() {
                         <View className='overview-header'>
                             <Text className='greeting'>{getGreeting()}，常老板</Text>
                             <View className='flash-icon'>
-                                <Text className='flash'>⚡</Text>
+                                <Image className='flash-img' src={FlashIcon} mode='aspectFit' />
                             </View>
                         </View>
                         <View className='overview-stats'>
@@ -142,19 +159,19 @@ export default function Home() {
                     <View className='quick-actions'>
                         <View className='action-item' onClick={() => handleQuickAction('scan')}>
                             <View className='action-icon scan'>
-                                <Text className='icon-text'>⎔</Text>
+                                <Image className='action-icon-img' src={ActionScanIcon} mode='aspectFit' />
                             </View>
                             <Text className='action-label'>扫码出库</Text>
                         </View>
                         <View className='action-item' onClick={() => handleQuickAction('analysis')}>
                             <View className='action-icon analysis'>
-                                <Text className='icon-text'>◐</Text>
+                                <Image className='action-icon-img' src={ActionAnalysisIcon} mode='aspectFit' />
                             </View>
                             <Text className='action-label'>库存分析</Text>
                         </View>
                         <View className='action-item' onClick={() => handleQuickAction('statement')}>
                             <View className='action-icon statement'>
-                                <Text className='icon-text'>☰</Text>
+                                <Image className='action-icon-img' src={ActionStatementIcon} mode='aspectFit' />
                             </View>
                             <Text className='action-label'>对账单</Text>
                         </View>
@@ -164,7 +181,7 @@ export default function Home() {
                     <View className='section'>
                         <View className='section-header'>
                             <View className='section-title-row'>
-                                <Text className='warning-icon'>⚠</Text>
+                                <Image className='warning-icon-img' src={WarningIcon} mode='aspectFit' />
                                 <Text className='section-title'>库存预警 ({lowStockItems.length})</Text>
                             </View>
                             <Text className='view-all' onClick={handleViewAllStock}>查看全部</Text>
@@ -198,7 +215,7 @@ export default function Home() {
                     <View className='section'>
                         <View className='section-header'>
                             <View className='section-title-row'>
-                                <Text className='activity-icon'>↗</Text>
+                                <Image className='activity-icon-img' src={TrendUpIcon} mode='aspectFit' />
                                 <Text className='section-title'>最近活动</Text>
                             </View>
                         </View>
@@ -206,7 +223,7 @@ export default function Home() {
                             recentActivities.map(tx => (
                                 <View key={tx._id} className='activity-item'>
                                     <View className={`activity-badge ${tx.type === 'outbound' ? 'out' : 'in'}`}>
-                                        <Text className='badge-icon'>{tx.type === 'outbound' ? '↗' : '↙'}</Text>
+                                        <Image className='badge-icon-img' src={tx.type === 'outbound' ? ArrowOutboundIcon : ArrowInboundIcon} mode='aspectFit' />
                                     </View>
                                     <View className='activity-info'>
                                         <Text className='activity-title'>{getMethodLabel(tx.method)}</Text>
@@ -230,8 +247,8 @@ export default function Home() {
                     </View>
 
                     <View style={{ height: '140px' }} />
-                </View>
-            </ScrollView>
+                </View >
+            </ScrollView >
 
             <QuickAddSheet
                 visible={showQuickAdd}
@@ -242,6 +259,6 @@ export default function Home() {
                     Taro.showToast({ title: '登记成功' })
                 }}
             />
-        </View>
+        </View >
     )
 }

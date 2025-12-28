@@ -7,7 +7,8 @@ export default {
     'pages/profile/index',
     'pages/product/index',
     'pages/add-product/index',
-    'pages/add-transaction/index'
+    'pages/add-transaction/index',
+    'pages/costs/index'
   ],
   window: {
     backgroundTextStyle: 'light',

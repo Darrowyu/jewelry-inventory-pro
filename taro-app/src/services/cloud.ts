@@ -4,6 +4,22 @@ import { InventoryItem, TransactionRecord, CostItem, CloudResponse } from '../ty
 // 判断是否在小程序环境
 const isWeapp = process.env.TARO_ENV === 'weapp'
 
+// 统一ID字段：将_id复制到id，确保两个字段都可用
+function normalizeId<T>(data: T): T {
+    if (!data) return data
+    if (Array.isArray(data)) {
+        return data.map(item => normalizeId(item)) as T
+    }
+    if (typeof data === 'object' && data !== null) {
+        const obj = data as Record<string, unknown>
+        if (obj._id && !obj.id) {
+            obj.id = obj._id
+        }
+        return obj as T
+    }
+    return data
+}
+
 // 云函数调用封装
 async function callCloud<T>(name: string, action: string, data?: any): Promise<T> {
     if (isWeapp) {
@@ -15,7 +31,7 @@ async function callCloud<T>(name: string, action: string, data?: any): Promise<T
         if (!res.result.success) {
             throw new Error(res.result.error || '云函数调用失败')
         }
-        return res.result.data as T
+        return normalizeId(res.result.data as T)
     } else {
         // H5环境通过HTTP调用
         const baseUrl = process.env.CLOUD_BASE_URL || ''
@@ -28,7 +44,7 @@ async function callCloud<T>(name: string, action: string, data?: any): Promise<T
         if (!result.success) {
             throw new Error(result.error || 'API调用失败')
         }
-        return result.data as T
+        return normalizeId(result.data as T)
     }
 }
 
@@ -80,7 +96,7 @@ export const costService = {
         return callCloud<CostItem[]>('costs', 'list')
     },
 
-    async add(item: Omit<CostItem, '_id' | 'createdAt'>): Promise<CostItem> {
+    async add(item: Omit<CostItem, '_id' | 'date' | 'createdAt'>): Promise<CostItem> {
         return callCloud<CostItem>('costs', 'add', item)
     },
 

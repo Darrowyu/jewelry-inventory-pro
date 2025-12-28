@@ -52,7 +52,7 @@ exports.main = async (event, context) => {
                 let total = 0
                 res.data.forEach(cost => {
                     if (!summary[cost.category]) {
-                        summary[cost.category] = { name: cost.category, value: 0 }
+                        summary[cost.category] = { name: cost.category, category: cost.category, value: 0 }
                     }
                     summary[cost.category].value += cost.amount || 0
                     total += cost.amount || 0

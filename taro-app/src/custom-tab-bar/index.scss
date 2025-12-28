@@ -4,6 +4,8 @@
     left: 0;
     right: 0;
     z-index: 999;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 /* 悬浮 + 按钮 */
@@ -41,7 +43,7 @@
     padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* 5 等分布局 */
+/* Tab 项布局 */
 .tab-item {
     flex: 1;
     display: flex;
@@ -51,212 +53,21 @@
     padding: 12px 0;
 }
 
-/* 图标背景容器 */
-.tab-icon-bg {
-    width: 64px;
-    height: 64px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.2s ease;
-
-    &.active {
-        background: #FDF2F8;
-    }
+/* SVG 图标样式 */
+.tab-icon-img {
+    width: 36px;
+    height: 36px;
 }
 
+/* Tab 文字 */
 .tab-text {
     font-size: 22px;
     font-weight: 500;
     color: #9CA3AF;
-    margin-top: 4px;
+    margin-top: 8px;
+    transition: color 0.15s ease;
 }
 
 .tab-item.active .tab-text {
     color: #EC4899;
-}
-
-/* 首页图标 */
-.icon-home {
-    width: 32px;
-    height: 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.icon-home .roof {
-    width: 0;
-    height: 0;
-    border-left: 14px solid transparent;
-    border-right: 14px solid transparent;
-    border-bottom: 10px solid #D1D5DB;
-    margin-bottom: -1px;
-}
-
-.icon-home.active .roof {
-    border-bottom-color: #EC4899;
-}
-
-.icon-home .house {
-    width: 20px;
-    height: 14px;
-    border: 2.5px solid #D1D5DB;
-    border-top: none;
-    border-radius: 0 0 3px 3px;
-    box-sizing: border-box;
-}
-
-.icon-home.active .house {
-    border-color: #EC4899;
-}
-
-/* 库存图标 */
-.icon-inventory {
-    display: grid;
-    grid-template-columns: repeat(2, 14px);
-    gap: 4px;
-}
-
-.icon-inventory .cell {
-    width: 14px;
-    height: 14px;
-    border: 2.5px solid #D1D5DB;
-    border-radius: 3px;
-    box-sizing: border-box;
-}
-
-.icon-inventory.active .cell {
-    border-color: #EC4899;
-}
-
-/* 明细图标 */
-.icon-records {
-    width: 32px;
-    height: 32px;
-    border: 2.5px solid #D1D5DB;
-    border-radius: 5px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.icon-records.active {
-    border-color: #EC4899;
-}
-
-.icon-records .top {
-    height: 9px;
-    border-bottom: 2px solid #D1D5DB;
-}
-
-.icon-records.active .top {
-    border-color: #EC4899;
-}
-
-.icon-records .body {
-    flex: 1;
-    position: relative;
-}
-
-.icon-records .plus-v {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 2px;
-    height: 10px;
-    background: #D1D5DB;
-}
-
-.icon-records .plus-h {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 10px;
-    height: 2px;
-    background: #D1D5DB;
-}
-
-.icon-records.active .plus-v,
-.icon-records.active .plus-h {
-    background: #EC4899;
-}
-
-/* 财务图标 */
-.icon-finance {
-    display: flex;
-    align-items: flex-end;
-    gap: 4px;
-    height: 32px;
-}
-
-.icon-finance .bar {
-    width: 6px;
-    background: #D1D5DB;
-    border-radius: 2px;
-}
-
-.icon-finance.active .bar {
-    background: #EC4899;
-}
-
-.icon-finance .b1 {
-    height: 12px;
-}
-
-.icon-finance .b2 {
-    height: 20px;
-}
-
-.icon-finance .b3 {
-    height: 28px;
-}
-
-/* 我的图标 */
-.icon-profile {
-    width: 32px;
-    height: 32px;
-    border: 2.5px solid #D1D5DB;
-    border-radius: 50%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.icon-profile.active {
-    border-color: #EC4899;
-}
-
-.icon-profile .head {
-    width: 10px;
-    height: 10px;
-    border: 2px solid #D1D5DB;
-    border-radius: 50%;
-    box-sizing: border-box;
-    margin-bottom: 1px;
-}
-
-.icon-profile.active .head {
-    border-color: #EC4899;
-}
-
-.icon-profile .body-arc {
-    width: 18px;
-    height: 10px;
-    border: 2px solid #D1D5DB;
-    border-radius: 10px 10px 0 0;
-    border-bottom: none;
-    box-sizing: border-box;
-}
-
-.icon-profile.active .body-arc {
-    border-color: #EC4899;
 }

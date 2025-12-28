@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { CostItem } from '../../types'
+import { CostItem, CostCategory } from '../../types'
 import { costApi } from '../../services/api'
-import { COST_COLORS } from '../../config'
-
-const COST_CATEGORIES = [
-    { value: 'equipment', label: '设备' },
-    { value: 'packaging', label: '包装' },
-    { value: 'parts', label: '配件' },
-    { value: 'procurement', label: '采购' },
-    { value: 'promotion', label: '推广' },
-    { value: 'loss', label: '损耗' }
-]
+import { COST_COLORS, COST_CATEGORY_OPTIONS } from '../../config'
 
 const CostsView: React.FC = () => {
     const [loading, setLoading] = useState(true)
@@ -18,8 +9,8 @@ const CostsView: React.FC = () => {
     const [showModal, setShowModal] = useState(false)
     const [newCost, setNewCost] = useState({
         name: '',
-        value: 0,
-        category: 'equipment' as CostItem['category']
+        amount: 0,
+        category: CostCategory.EQUIPMENT
     })
 
     useEffect(() => {
@@ -39,12 +30,12 @@ const CostsView: React.FC = () => {
     }
 
     const handleAddCost = async () => {
-        if (!newCost.name || newCost.value <= 0) return
+        if (!newCost.name || newCost.amount <= 0) return
 
         try {
             await costApi.add(newCost)
             setShowModal(false)
-            setNewCost({ name: '', value: 0, category: 'equipment' })
+            setNewCost({ name: '', amount: 0, category: CostCategory.EQUIPMENT })
             loadCosts()
         } catch (error) {
             console.error('添加成本失败:', error)
@@ -62,11 +53,11 @@ const CostsView: React.FC = () => {
         }
     }
 
-    const totalCosts = costs.reduce((sum, c) => sum + c.value, 0)
+    const totalCosts = costs.reduce((sum, c) => sum + (c.amount || 0), 0)
 
-    const costsByCategory = COST_CATEGORIES.map(cat => ({
+    const costsByCategory = COST_CATEGORY_OPTIONS.map(cat => ({
         ...cat,
-        total: costs.filter(c => c.category === cat.value).reduce((sum, c) => sum + c.value, 0),
+        total: costs.filter(c => c.category === cat.value).reduce((sum, c) => sum + (c.amount || 0), 0),
         count: costs.filter(c => c.category === cat.value).length
     }))
 
@@ -156,10 +147,10 @@ const CostsView: React.FC = () => {
                                                     color: COST_COLORS[cost.category]
                                                 }}
                                             >
-                                                {COST_CATEGORIES.find(c => c.value === cost.category)?.label || cost.category}
+                                                {COST_CATEGORY_OPTIONS.find(c => c.value === cost.category)?.label || cost.category}
                                             </span>
                                         </td>
-                                        <td style={{ fontWeight: 600 }}>¥{cost.value.toLocaleString()}</td>
+                                        <td style={{ fontWeight: 600 }}>¥{(cost.amount || 0).toLocaleString()}</td>
                                         <td style={{ color: '#6B7280', fontSize: 13 }}>{cost.date}</td>
                                         <td>
                                             <button
@@ -204,8 +195,8 @@ const CostsView: React.FC = () => {
                                         type="number"
                                         className="form-input"
                                         placeholder="0"
-                                        value={newCost.value || ''}
-                                        onChange={e => setNewCost({ ...newCost, value: Number(e.target.value) })}
+                                        value={newCost.amount || ''}
+                                        onChange={e => setNewCost({ ...newCost, amount: Number(e.target.value) })}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -213,9 +204,9 @@ const CostsView: React.FC = () => {
                                     <select
                                         className="form-select"
                                         value={newCost.category}
-                                        onChange={e => setNewCost({ ...newCost, category: e.target.value as CostItem['category'] })}
+                                        onChange={e => setNewCost({ ...newCost, category: e.target.value as CostCategory })}
                                     >
-                                        {COST_CATEGORIES.map(cat => (
+                                        {COST_CATEGORY_OPTIONS.map(cat => (
                                             <option key={cat.value} value={cat.value}>{cat.label}</option>
                                         ))}
                                     </select>

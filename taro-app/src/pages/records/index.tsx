@@ -1,42 +1,62 @@
-import { useState, useMemo } from 'react'
-import { View, Text, Input, ScrollView } from '@tarojs/components'
-import Taro, { useDidShow } from '@tarojs/taro'
+import { useState, useMemo, useEffect } from 'react'
+import { View, Text, Input, ScrollView, Image } from '@tarojs/components'
+import Taro, { useDidShow, useRouter } from '@tarojs/taro'
 import { transactionService, inventoryService } from '../../services/cloud'
 import { TransactionRecord, Currency, InventoryItem } from '../../types'
 import { formatTime } from '../../utils'
 import QuickAddSheet from '../../components/QuickAddSheet'
+import SearchIcon from '../../assets/icons/search.svg'
+import ArrowOutboundIcon from '../../assets/icons/arrow-outbound.svg'
+import ArrowInboundIcon from '../../assets/icons/arrow-inbound.svg'
 import './index.scss'
 
 type FilterType = 'ALL' | 'IN' | 'OUT'
 
 export default function Records() {
+    const router = useRouter()
     const [records, setRecords] = useState<TransactionRecord[]>([])
     const [inventory, setInventory] = useState<InventoryItem[]>([])
     const [loading, setLoading] = useState(true)
     const [filter, setFilter] = useState<FilterType>('ALL')
+    const [currencyFilter, setCurrencyFilter] = useState<string | null>(null)
     const [showQuickAdd, setShowQuickAdd] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
 
     useDidShow(() => {
+        // 处理URL参数中的currency筛选
+        const { currency } = router.params
+        if (currency) {
+            setCurrencyFilter(currency)
+        }
         loadData()
-        // 同步 TabBar 选中状态
+        /* 同步TabBar选中状态 */
         const page = Taro.getCurrentInstance().page
-        const tabBar = page?.getTabBar?.() as any
-        tabBar?.setSelected?.(2)
-        // 监听弹窗显示/隐藏事件
-        const showListener = () => setShowQuickAdd(true)
-        const hideListener = () => setShowQuickAdd(false)
-        Taro.eventCenter.on('showQuickAddSheet', showListener)
-        Taro.eventCenter.on('hideQuickAddSheet', hideListener)
-        return () => {
-            Taro.eventCenter.off('showQuickAddSheet', showListener)
-            Taro.eventCenter.off('hideQuickAddSheet', hideListener)
+        if (page) {
+            const tabBar = Taro.getTabBar<any>(page)
+            tabBar?.setSelected?.(2)
         }
     })
 
-    const loadData = async () => {
+    useEffect(() => {
+        const showListener = () => setShowQuickAdd(true)
+        const hideListener = () => setShowQuickAdd(false)
+        const currencyListener = (currency: string) => setCurrencyFilter(currency)
+        Taro.eventCenter.on('showQuickAddSheet', showListener)
+        Taro.eventCenter.on('hideQuickAddSheet', hideListener)
+        Taro.eventCenter.on('setCurrencyFilter', currencyListener)
+        return () => {
+            Taro.eventCenter.off('showQuickAddSheet', showListener)
+            Taro.eventCenter.off('hideQuickAddSheet', hideListener)
+            Taro.eventCenter.off('setCurrencyFilter', currencyListener)
+        }
+    }, [])
+
+    const loadData = async (showLoading = false) => {
         try {
-            setLoading(true)
+            // 只在首次加载时显示loading，避免切换页面时闪烁
+            if (showLoading || records.length === 0) {
+                setLoading(true)
+            }
             const [recordList, invList] = await Promise.all([
                 transactionService.list({ limit: 100 }),
                 inventoryService.list()
@@ -63,6 +83,8 @@ export default function Records() {
             // 类型过滤
             if (filter === 'IN' && item.type !== 'inbound') return false
             if (filter === 'OUT' && item.type !== 'outbound') return false
+            // 币种过滤
+            if (currencyFilter && item.currency !== currencyFilter) return false
             // 搜索过滤
             if (searchQuery.trim()) {
                 const q = searchQuery.toLowerCase()
@@ -72,14 +94,18 @@ export default function Records() {
             }
             return true
         })
-    }, [records, filter, searchQuery, inventory])
+    }, [records, filter, currencyFilter, searchQuery, inventory])
+
+    const clearCurrencyFilter = () => {
+        setCurrencyFilter(null)
+    }
 
     const handleFilterChange = (type: FilterType) => {
         setFilter(type)
     }
 
     const getIcon = (type: string) => {
-        return type === 'inbound' ? '↙' : '↗'
+        return type === 'inbound' ? ArrowInboundIcon : ArrowOutboundIcon
     }
 
     const getFormatCurrency = (amount: number, currency?: Currency) => {
@@ -92,7 +118,7 @@ export default function Records() {
                 <View className='inner-content'>
                     {/* 搜索框 */}
                     <View className='search-box'>
-                        <Text className='search-icon'>🔍</Text>
+                        <Image className='search-icon-img' src={SearchIcon} mode='aspectFit' />
                         <Input
                             className='search-input'
                             placeholder='搜索款号、品类...'
@@ -130,6 +156,12 @@ export default function Records() {
                         >
                             <Text>出库</Text>
                         </View>
+                        {currencyFilter && (
+                            <View className='currency-tag' onClick={clearCurrencyFilter}>
+                                <Text>{currencyFilter}</Text>
+                                <Text className='close'>×</Text>
+                            </View>
+                        )}
                     </View>
 
                     {/* 记录列表 */}
@@ -141,7 +173,7 @@ export default function Records() {
                                 <View key={item._id} className='record-item'>
                                     {/* 左侧图标 */}
                                     <View className={`icon-wrapper ${item.type}`}>
-                                        <Text className='type-icon'>{getIcon(item.type)}</Text>
+                                        <Image className='type-icon-img' src={getIcon(item.type)} mode='aspectFit' />
                                     </View>
 
                                     {/* 中间信息 */}
