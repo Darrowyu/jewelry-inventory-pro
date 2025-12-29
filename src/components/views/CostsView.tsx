@@ -3,6 +3,17 @@ import { CostItem, CostCategory } from '../../types'
 import { costApi } from '../../services/api'
 import { COST_COLORS, COST_CATEGORY_OPTIONS } from '../../config'
 
+// 日期格式化函数
+const formatDate = (dateStr: string) => {
+    if (!dateStr) return '-'
+    try {
+        const date = new Date(dateStr)
+        return date.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    } catch {
+        return dateStr
+    }
+}
+
 const CostsView: React.FC = () => {
     const [loading, setLoading] = useState(true)
     const [costs, setCosts] = useState<CostItem[]>([])
@@ -151,7 +162,7 @@ const CostsView: React.FC = () => {
                                             </span>
                                         </td>
                                         <td style={{ fontWeight: 600 }}>¥{(cost.amount || 0).toLocaleString()}</td>
-                                        <td style={{ color: '#6B7280', fontSize: 13 }}>{cost.date}</td>
+                                        <td style={{ color: '#6B7280', fontSize: 13 }}>{formatDate(cost.date)}</td>
                                         <td>
                                             <button
                                                 className="btn btn-sm"

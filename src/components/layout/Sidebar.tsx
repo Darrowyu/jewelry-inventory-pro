@@ -1,4 +1,5 @@
 import React from 'react'
+import { DiamondIcon, DashboardIcon, InventoryIcon, TransactionsIcon, FinanceIcon, CostsIcon, UsersIcon, LogoutIcon } from '../Icons'
 
 interface CurrentUser {
     username: string
@@ -14,15 +15,15 @@ interface SidebarProps {
 }
 
 const menuItems = [
-    { id: 'dashboard', label: '概览', icon: '📊' },
-    { id: 'inventory', label: '库存管理', icon: '📦' },
-    { id: 'transactions', label: '交易记录', icon: '📋' },
-    { id: 'finance', label: '财务分析', icon: '💰' },
-    { id: 'costs', label: '成本管理', icon: '📉' }
+    { id: 'dashboard', label: '概览', Icon: DashboardIcon },
+    { id: 'inventory', label: '库存管理', Icon: InventoryIcon },
+    { id: 'transactions', label: '交易记录', Icon: TransactionsIcon },
+    { id: 'finance', label: '财务分析', Icon: FinanceIcon },
+    { id: 'costs', label: '成本管理', Icon: CostsIcon }
 ]
 
 const adminMenuItems = [
-    { id: 'users', label: '用户管理', icon: '👥' }
+    { id: 'users', label: '用户管理', Icon: UsersIcon }
 ]
 
 const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, currentUser, onLogout }) => {
@@ -32,7 +33,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, currentUser
         <aside className="sidebar">
             <div className="sidebar-header">
                 <div className="sidebar-logo">
-                    <div className="sidebar-logo-icon">💎</div>
+                    <div className="sidebar-logo-icon">
+                        <DiamondIcon size={20} color="white" />
+                    </div>
                     <span className="sidebar-logo-text">库存管家</span>
                 </div>
             </div>
@@ -46,7 +49,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, currentUser
                             className={`nav-item ${activeView === item.id ? 'active' : ''}`}
                             onClick={() => onViewChange(item.id)}
                         >
-                            <span className="nav-item-icon">{item.icon}</span>
+                            <span className="nav-item-icon">
+                                <item.Icon size={20} color={activeView === item.id ? 'white' : '#9CA3AF'} />
+                            </span>
                             <span>{item.label}</span>
                         </div>
                     ))}
@@ -61,7 +66,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, currentUser
                                 className={`nav-item ${activeView === item.id ? 'active' : ''}`}
                                 onClick={() => onViewChange(item.id)}
                             >
-                                <span className="nav-item-icon">{item.icon}</span>
+                                <span className="nav-item-icon">
+                                    <item.Icon size={20} color={activeView === item.id ? 'white' : '#9CA3AF'} />
+                                </span>
                                 <span>{item.label}</span>
                             </div>
                         ))}
@@ -80,8 +87,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, currentUser
                             <div className="user-role">{isAdmin ? '管理员' : '用户'}</div>
                         </div>
                     </div>
-                    <button className="logout-btn" onClick={onLogout}>
-                        退出
+                    <button className="logout-btn" onClick={onLogout} title="退出登录">
+                        <LogoutIcon size={16} color="#9CA3AF" />
                     </button>
                 </div>
             )}

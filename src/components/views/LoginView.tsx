@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { getApiUrl } from '../../config/api'
+import { DiamondIcon } from '../Icons'
 
 interface LoginViewProps {
     onLogin: (user: { username: string; role: string }) => void
@@ -49,14 +50,16 @@ const LoginView: React.FC<LoginViewProps> = ({ onLogin }) => {
         <div className="login-container">
             <div className="login-box">
                 <div className="login-header">
-                    <span className="login-logo">💎</span>
+                    <span className="login-logo">
+                        <DiamondIcon size={48} color="#EC4899" />
+                    </span>
                     <h1>珠宝库存管家</h1>
                     <p>Web 管理后台</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="login-form">
                     {error && <div className="login-error">{error}</div>}
-                    
+
                     <div className="form-group">
                         <label>用户名</label>
                         <input

@@ -8,6 +8,7 @@ import FinanceView from './components/views/FinanceView'
 import CostsView from './components/views/CostsView'
 import LoginView from './components/views/LoginView'
 import UsersView from './components/views/UsersView'
+import { DiamondIcon } from './components/Icons'
 import { getApiUrl } from './config/api'
 import './index.css'
 
@@ -99,7 +100,9 @@ const App: React.FC = () => {
         return (
             <div className="loading-screen">
                 <div className="loading-content">
-                    <span className="loading-icon">💎</span>
+                    <span className="loading-icon">
+                        <DiamondIcon size={48} color="#EC4899" />
+                    </span>
                     <p>加载中...</p>
                 </div>
             </div>
