@@ -66,7 +66,7 @@ exports.main = async (event, context) => {
             // 使用邀请码注册新用户
             case 'register': {
                 const { inviteCode, username, password, nickname } = data || {}
-                
+
                 if (!inviteCode || !username || !password) {
                     return { success: false, error: '请填写完整信息' }
                 }
@@ -133,7 +133,7 @@ exports.main = async (event, context) => {
 
                 return {
                     success: true,
-                    data: { 
+                    data: {
                         message: '注册成功',
                         userId: userResult._id,
                         user: {
@@ -151,7 +151,7 @@ exports.main = async (event, context) => {
             // 用户名密码登录
             case 'login': {
                 const { username, password } = data || {}
-                
+
                 if (!username || !password) {
                     return { success: false, error: '请输入用户名和密码' }
                 }
@@ -203,19 +203,19 @@ exports.main = async (event, context) => {
                 if (!avatarUrl) {
                     return { success: false, error: '头像地址为空' }
                 }
-                
+
                 const userRes = await usersCollection.where({ openid, status: 'active' }).get()
                 if (userRes.data.length === 0) {
                     return { success: false, error: '用户不存在' }
                 }
-                
+
                 await usersCollection.doc(userRes.data[0]._id).update({
                     data: {
                         avatarUrl,
                         updatedAt: new Date().toISOString()
                     }
                 })
-                
+
                 return { success: true, data: { message: '头像更新成功' } }
             }
 
@@ -224,7 +224,7 @@ exports.main = async (event, context) => {
             // Web端登录验证（无需openid）
             case 'webLogin': {
                 const { username, password } = data || {}
-                
+
                 if (!username || !password) {
                     return { success: false, error: '请输入用户名和密码' }
                 }
@@ -239,8 +239,8 @@ exports.main = async (event, context) => {
                     return { success: false, error: '用户名或密码错误' }
                 }
 
-                await usersCollection.doc(user._id).update({ 
-                    data: { lastLoginAt: new Date().toISOString() } 
+                await usersCollection.doc(user._id).update({
+                    data: { lastLoginAt: new Date().toISOString() }
                 })
 
                 return {
@@ -259,11 +259,11 @@ exports.main = async (event, context) => {
             // 获取用户列表（管理员）
             case 'listUsers': {
                 const { adminUsername } = data || {}
-                
+
                 // 简单验证：检查请求者是否是管理员
                 if (adminUsername) {
-                    const adminRes = await usersCollection.where({ 
-                        username: adminUsername, 
+                    const adminRes = await usersCollection.where({
+                        username: adminUsername,
                         role: 'admin',
                         status: 'active'
                     }).get()
@@ -271,8 +271,8 @@ exports.main = async (event, context) => {
                         return { success: false, error: '无权限' }
                     }
                 } else if (openid) {
-                    const adminRes = await usersCollection.where({ 
-                        openid, 
+                    const adminRes = await usersCollection.where({
+                        openid,
                         role: 'admin',
                         status: 'active'
                     }).get()
@@ -284,8 +284,8 @@ exports.main = async (event, context) => {
                 }
 
                 const users = await usersCollection.orderBy('createdAt', 'desc').get()
-                return { 
-                    success: true, 
+                return {
+                    success: true,
                     data: users.data.map(u => ({
                         id: u._id,
                         username: u.username,
@@ -301,10 +301,10 @@ exports.main = async (event, context) => {
             // 创建邀请码（管理员）
             case 'createInviteCode': {
                 const { adminUsername, maxUses = 10, note, code: customCode } = data || {}
-                
+
                 if (adminUsername) {
-                    const adminRes = await usersCollection.where({ 
-                        username: adminUsername, 
+                    const adminRes = await usersCollection.where({
+                        username: adminUsername,
                         role: 'admin',
                         status: 'active'
                     }).get()
@@ -312,8 +312,8 @@ exports.main = async (event, context) => {
                         return { success: false, error: '无权限' }
                     }
                 } else if (openid) {
-                    const adminRes = await usersCollection.where({ 
-                        openid, 
+                    const adminRes = await usersCollection.where({
+                        openid,
                         role: 'admin',
                         status: 'active'
                     }).get()
@@ -325,7 +325,7 @@ exports.main = async (event, context) => {
                 }
 
                 const code = customCode ? customCode.toUpperCase() : generateInviteCode()
-                
+
                 // 检查邀请码是否已存在
                 const existingCode = await codesCollection.where({ code }).get()
                 if (existingCode.data.length > 0) {
@@ -350,10 +350,10 @@ exports.main = async (event, context) => {
             // 获取邀请码列表（管理员）
             case 'listInviteCodes': {
                 const { adminUsername } = data || {}
-                
+
                 if (adminUsername) {
-                    const adminRes = await usersCollection.where({ 
-                        username: adminUsername, 
+                    const adminRes = await usersCollection.where({
+                        username: adminUsername,
                         role: 'admin',
                         status: 'active'
                     }).get()
@@ -361,8 +361,8 @@ exports.main = async (event, context) => {
                         return { success: false, error: '无权限' }
                     }
                 } else if (openid) {
-                    const adminRes = await usersCollection.where({ 
-                        openid, 
+                    const adminRes = await usersCollection.where({
+                        openid,
                         role: 'admin',
                         status: 'active'
                     }).get()
@@ -380,10 +380,10 @@ exports.main = async (event, context) => {
             // 禁用/启用用户（管理员）
             case 'toggleUserStatus': {
                 const { adminUsername, userId, status } = data || {}
-                
+
                 if (adminUsername) {
-                    const adminRes = await usersCollection.where({ 
-                        username: adminUsername, 
+                    const adminRes = await usersCollection.where({
+                        username: adminUsername,
                         role: 'admin',
                         status: 'active'
                     }).get()
@@ -395,7 +395,7 @@ exports.main = async (event, context) => {
                 }
 
                 await usersCollection.doc(userId).update({
-                    data: { 
+                    data: {
                         status: status,
                         updatedAt: new Date().toISOString()
                     }
@@ -407,10 +407,10 @@ exports.main = async (event, context) => {
             // 删除邀请码（管理员）
             case 'deleteInviteCode': {
                 const { adminUsername, codeId } = data || {}
-                
+
                 if (adminUsername) {
-                    const adminRes = await usersCollection.where({ 
-                        username: adminUsername, 
+                    const adminRes = await usersCollection.where({
+                        username: adminUsername,
                         role: 'admin',
                         status: 'active'
                     }).get()
@@ -425,10 +425,116 @@ exports.main = async (event, context) => {
                 return { success: true, data: { message: '删除成功' } }
             }
 
+            // 更新用户信息（管理员）
+            case 'updateUser': {
+                const { adminUsername, userId, nickname, role } = data || {}
+
+                if (!adminUsername) {
+                    return { success: false, error: '无权限' }
+                }
+
+                const adminRes = await usersCollection.where({
+                    username: adminUsername,
+                    role: 'admin',
+                    status: 'active'
+                }).get()
+                if (adminRes.data.length === 0) {
+                    return { success: false, error: '无权限' }
+                }
+
+                if (!userId) {
+                    return { success: false, error: '用户ID不能为空' }
+                }
+
+                const updateData = { updatedAt: new Date().toISOString() }
+                if (nickname !== undefined) updateData.nickname = nickname
+                if (role !== undefined && ['admin', 'user'].includes(role)) updateData.role = role
+
+                await usersCollection.doc(userId).update({ data: updateData })
+                return { success: true, data: { message: '用户信息更新成功' } }
+            }
+
+            // 重置用户密码（管理员）
+            case 'resetPassword': {
+                const { adminUsername, userId, newPassword } = data || {}
+
+                if (!adminUsername) {
+                    return { success: false, error: '无权限' }
+                }
+
+                const adminRes = await usersCollection.where({
+                    username: adminUsername,
+                    role: 'admin',
+                    status: 'active'
+                }).get()
+                if (adminRes.data.length === 0) {
+                    return { success: false, error: '无权限' }
+                }
+
+                if (!userId || !newPassword) {
+                    return { success: false, error: '用户ID和新密码不能为空' }
+                }
+
+                if (newPassword.length < 6) {
+                    return { success: false, error: '密码至少6位' }
+                }
+
+                const salt = generateSalt()
+                const passwordHash = hashPassword(newPassword, salt)
+
+                await usersCollection.doc(userId).update({
+                    data: {
+                        salt,
+                        passwordHash,
+                        updatedAt: new Date().toISOString()
+                    }
+                })
+                return { success: true, data: { message: '密码重置成功' } }
+            }
+
+            // 获取单个用户详情（管理员）
+            case 'getUserDetail': {
+                const { adminUsername, userId } = data || {}
+
+                if (!adminUsername) {
+                    return { success: false, error: '无权限' }
+                }
+
+                const adminRes = await usersCollection.where({
+                    username: adminUsername,
+                    role: 'admin',
+                    status: 'active'
+                }).get()
+                if (adminRes.data.length === 0) {
+                    return { success: false, error: '无权限' }
+                }
+
+                const userRes = await usersCollection.doc(userId).get()
+                if (!userRes.data) {
+                    return { success: false, error: '用户不存在' }
+                }
+
+                const u = userRes.data
+                return {
+                    success: true,
+                    data: {
+                        id: u._id,
+                        username: u.username,
+                        nickname: u.nickname,
+                        role: u.role,
+                        status: u.status,
+                        inviteCode: u.inviteCode || '',
+                        createdAt: u.createdAt,
+                        updatedAt: u.updatedAt,
+                        lastLoginAt: u.lastLoginAt
+                    }
+                }
+            }
+
             // 初始化管理员账号（仅首次使用）
             case 'initAdmin': {
                 const { username, password, inviteCodes } = data || {}
-                
+
                 // 检查是否已有管理员
                 const existingAdmin = await usersCollection.where({ role: 'admin' }).get()
                 if (existingAdmin.data.length > 0) {
@@ -459,8 +565,8 @@ exports.main = async (event, context) => {
                 })
 
                 // 创建邀请码（支持预设或自动生成）
-                const codesToCreate = inviteCodes && inviteCodes.length > 0 
-                    ? inviteCodes 
+                const codesToCreate = inviteCodes && inviteCodes.length > 0
+                    ? inviteCodes
                     : [{ code: generateInviteCode(), maxUses: 10, note: '初始邀请码' }]
 
                 const createdCodes = []
@@ -480,12 +586,12 @@ exports.main = async (event, context) => {
                     createdCodes.push(code)
                 }
 
-                return { 
-                    success: true, 
-                    data: { 
+                return {
+                    success: true,
+                    data: {
                         message: '管理员创建成功',
                         inviteCodes: createdCodes
-                    } 
+                    }
                 }
             }
 

@@ -1,9 +1,10 @@
 // API 基础 URL 配置
-const VERCEL_API_URL = 'https://jewelry-inventory-pro-yvomma.vercel.app/api'
-
-// 生产环境用相对路径，开发环境用 Vercel API
-export const API_BASE_URL = import.meta.env.PROD ? '/api' : VERCEL_API_URL
+// 开发环境通过 Vite 代理访问 Vercel API，生产环境直接使用相对路径
+export const API_BASE_URL = '/api'
 
 export const getApiUrl = (path: string) => {
-    return `${API_BASE_URL}${path}`
+    // 确保路径不会重复 /api
+    const cleanPath = path.startsWith('/') ? path : `/${path}`
+    return `${API_BASE_URL}${cleanPath}`
 }
+
