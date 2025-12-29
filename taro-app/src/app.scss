@@ -1,5 +1,14 @@
 /* 微信小程序不支持外部字体导入，使用系统字体 */
 
+/* 全局隐藏滚动条 */
+::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+    color: transparent;
+    background: transparent;
+}
+
 page {
     font-family: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: #FFFFFF;

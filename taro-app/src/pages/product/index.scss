@@ -1,8 +1,16 @@
 .detail-page {
-    min-height: 100vh;
+    height: 100vh;
     background: #FFFFFF;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+}
+
+.detail-scroll {
+    flex: 1;
+    min-height: 0;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .detail-image {

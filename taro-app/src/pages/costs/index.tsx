@@ -149,7 +149,7 @@ export default function Costs() {
 
     return (
         <View className='costs-page'>
-            <ScrollView scrollY className='scroll-content'>
+            <ScrollView scrollY showScrollbar={false} className='scroll-content'>
                 {/* 总成本卡片 */}
                 <View className='total-card'>
                     <View className='total-header'>
@@ -167,7 +167,7 @@ export default function Costs() {
                             <Text className='section-title'>分类汇总</Text>
                             <View className='section-line' />
                         </View>
-                        <ScrollView scrollX className='category-scroll'>
+                        <ScrollView scrollX showScrollbar={false} className='category-scroll'>
                             <View className='category-list'>
                                 {costsByCategory.filter(c => c.count > 0).map(cat => (
                                     <View key={cat.value} className='category-card'>

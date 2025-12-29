@@ -1,7 +1,17 @@
 .add-page {
-    min-height: 100vh;
+    height: 100vh;
     background: #F8F9FA;
-    padding-bottom: 200px;
+    overflow: hidden;
+}
+
+.scroll-content {
+    height: 100vh;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.inner-content {
+    min-height: 100vh;
 }
 
 .form-section {

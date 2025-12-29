@@ -1,9 +1,19 @@
 .profile-page {
-    min-height: 100vh;
+    height: 100vh;
     background: #FFFFFF;
-    padding: 32px;
-    padding-bottom: 200px;
+    overflow: hidden;
     transform: translateZ(0);
+}
+
+.scroll-content {
+    height: 100vh;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.inner-content {
+    min-height: 100vh;
+    padding: 32px;
     animation: fadeIn 0.15s ease-out;
 }
 

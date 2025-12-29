@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { View, Text, Image, Button } from '@tarojs/components'
+import { View, Text, Image, Button, ScrollView } from '@tarojs/components'
 import Taro, { useDidShow } from '@tarojs/taro'
 import QuickAddSheet from '../../components/QuickAddSheet'
 // 个人信息图标
@@ -241,166 +241,172 @@ export default function Profile() {
 
     return (
         <View className='profile-page'>
-            {/* 顶部标题 */}
-            <View className='page-header'>
-                <Text className='header-title'>个人中心</Text>
-                <View className='header-line' />
-            </View>
+            <ScrollView scrollY showScrollbar={false} className='scroll-content'>
+                <View className='inner-content'>
+                    {/* 顶部标题 */}
+                    <View className='page-header'>
+                        <Text className='header-title'>个人中心</Text>
+                        <View className='header-line' />
+                    </View>
 
-            {/* 个人信息卡片 */}
-            <View className='user-card'>
-                <View className='card-top'>
-                    {process.env.TARO_ENV === 'weapp' ? (
-                        <Button className='avatar-btn' openType='chooseAvatar' onChooseAvatar={handleChooseAvatar}>
-                            <View className='avatar'>
-                                {userInfo.avatarUrl ? (
-                                    <Image className='avatar-icon-img avatar-real' src={userInfo.avatarUrl} mode='aspectFill' />
-                                ) : (
-                                    <Image className='avatar-icon-img' src={AvatarIcon} mode='aspectFit' />
-                                )}
-                            </View>
-                        </Button>
-                    ) : (
-                        <View className='avatar'>
-                            {userInfo.avatarUrl ? (
-                                <Image className='avatar-icon-img avatar-real' src={userInfo.avatarUrl} mode='aspectFill' />
+                    {/* 个人信息卡片 */}
+                    <View className='user-card'>
+                        <View className='card-top'>
+                            {process.env.TARO_ENV === 'weapp' ? (
+                                <Button className='avatar-btn' openType='chooseAvatar' onChooseAvatar={handleChooseAvatar}>
+                                    <View className='avatar'>
+                                        {userInfo.avatarUrl ? (
+                                            <Image className='avatar-icon-img avatar-real' src={userInfo.avatarUrl} mode='aspectFill' />
+                                        ) : (
+                                            <Image className='avatar-icon-img' src={AvatarIcon} mode='aspectFit' />
+                                        )}
+                                    </View>
+                                </Button>
                             ) : (
-                                <Image className='avatar-icon-img' src={AvatarIcon} mode='aspectFit' />
+                                <View className='avatar'>
+                                    {userInfo.avatarUrl ? (
+                                        <Image className='avatar-icon-img avatar-real' src={userInfo.avatarUrl} mode='aspectFill' />
+                                    ) : (
+                                        <Image className='avatar-icon-img' src={AvatarIcon} mode='aspectFit' />
+                                    )}
+                                </View>
                             )}
-                        </View>
-                    )}
-                    <View className='user-info'>
-                        <Text className='username'>{userInfo.nickname || userInfo.username || '用户'}</Text>
-                        <View className='pro-tag'>
-                            <Text className='tag-text'>PRO 专业版</Text>
-                        </View>
-                    </View>
-                    <View className='bg-decoration'>
-                        <Image className='star-icon-img' src={StarIcon} mode='aspectFit' />
-                    </View>
-                </View>
-
-                <View className='card-divider' />
-
-                <View className='card-bottom'>
-                    <View className='info-col'>
-                        <Text className='label'>加入时间</Text>
-                        <Text className='value'>{userInfo.createdAt ? userInfo.createdAt.slice(0, 10) : '--'}</Text>
-                    </View>
-                    <View className='info-col align-right'>
-                        <Text className='label'>数据同步</Text>
-                        <View className='status-row'>
-                            <Image className='status-icon-img' src={CheckIcon} mode='aspectFit' />
-                            <Text className='value'>已加密</Text>
-                        </View>
-                    </View>
-                </View>
-            </View>
-
-            {/* 业务工具 */}
-            <View className='section'>
-                <Text className='section-title'>业务工具</Text>
-                <View className='tools-grid'>
-                    <View className='tool-item' onClick={handleWarehouse}>
-                        <View className='tool-icon-bg'>
-                            <Image className='tool-icon-img' src={WarehouseIcon} mode='aspectFit' />
-                        </View>
-                        <Text className='tool-name'>仓库管理</Text>
-                    </View>
-                    <View className='tool-item' onClick={handleCategory}>
-                        <View className='tool-icon-bg'>
-                            <Image className='tool-icon-img' src={CategoryIcon} mode='aspectFit' />
-                        </View>
-                        <Text className='tool-name'>品类设置</Text>
-                    </View>
-                    <View className='tool-item' onClick={handleExport}>
-                        <View className='tool-icon-bg'>
-                            <Image className='tool-icon-img' src={ExportIcon} mode='aspectFit' />
-                        </View>
-                        <Text className='tool-name'>导出报表</Text>
-                    </View>
-                </View>
-            </View>
-
-            {/* 系统设置 */}
-            <View className='section'>
-                <Text className='section-title'>系统设置</Text>
-                <View className='settings-list'>
-                    <View className='setting-item' onClick={handleCurrency}>
-                        <View className='item-left'>
-                            <Image className='item-icon-img' src={CurrencyIcon} mode='aspectFit' />
-                            <Text className='item-name'>汇率与币种设置</Text>
-                        </View>
-                        <View className='item-right'>
-                            <Text className='item-desc'>CNY / SGD / TWD</Text>
-                            <Text className='arrow'>›</Text>
-                        </View>
-                    </View>
-
-                    <View className='setting-item' onClick={handleSync}>
-                        <View className='item-left'>
-                            <Image className='item-icon-img' src={SyncIcon} mode='aspectFit' />
-                            <Text className='item-name'>手动同步云端数据</Text>
-                        </View>
-                        <View className='item-right'>
-                            <Text className='arrow'>›</Text>
-                        </View>
-                    </View>
-
-                    <View className='setting-item' onClick={handlePrivacy}>
-                        <View className='item-left'>
-                            <Image className='item-icon-img' src={PrivacyIcon} mode='aspectFit' />
-                            <Text className='item-name'>数据安全与隐私协议</Text>
-                        </View>
-                        <View className='item-right'>
-                            <Text className='arrow'>›</Text>
-                        </View>
-                    </View>
-
-                    {process.env.TARO_ENV === 'weapp' && (
-                        <View className='setting-item' onClick={handleShowOpenid}>
-                            <View className='item-left'>
-                                <Image className='item-icon-img' src={PrivacyIcon} mode='aspectFit' />
-                                <Text className='item-name'>用户标识</Text>
+                            <View className='user-info'>
+                                <Text className='username'>{userInfo.nickname || userInfo.username || '用户'}</Text>
+                                <View className='pro-tag'>
+                                    <Text className='tag-text'>PRO 专业版</Text>
+                                </View>
                             </View>
-                            <View className='item-right'>
-                                <Text className='item-desc'>{openid ? '点击查看' : '加载中...'}</Text>
-                                <Text className='arrow'>›</Text>
+                            <View className='bg-decoration'>
+                                <Image className='star-icon-img' src={StarIcon} mode='aspectFit' />
                             </View>
                         </View>
-                    )}
 
-                    <View className='setting-item' onClick={handleHelp}>
-                        <View className='item-left'>
-                            <Image className='item-icon-img' src={HelpIcon} mode='aspectFit' />
-                            <Text className='item-name'>使用帮助与反馈</Text>
-                        </View>
-                        <View className='item-right'>
-                            <Text className='arrow'>›</Text>
+                        <View className='card-divider' />
+
+                        <View className='card-bottom'>
+                            <View className='info-col'>
+                                <Text className='label'>加入时间</Text>
+                                <Text className='value'>{userInfo.createdAt ? userInfo.createdAt.slice(0, 10) : '--'}</Text>
+                            </View>
+                            <View className='info-col align-right'>
+                                <Text className='label'>数据同步</Text>
+                                <View className='status-row'>
+                                    <Image className='status-icon-img' src={CheckIcon} mode='aspectFit' />
+                                    <Text className='value'>已加密</Text>
+                                </View>
+                            </View>
                         </View>
                     </View>
 
-                    <View className='setting-item last' onClick={handleShare}>
-                        <View className='item-left'>
-                            <Image className='item-icon-img' src={ShareIcon} mode='aspectFit' />
-                            <Text className='item-name'>推荐给同行</Text>
-                        </View>
-                        <View className='item-right'>
-                            <Text className='arrow'>›</Text>
+                    {/* 业务工具 */}
+                    <View className='section'>
+                        <Text className='section-title'>业务工具</Text>
+                        <View className='tools-grid'>
+                            <View className='tool-item' onClick={handleWarehouse}>
+                                <View className='tool-icon-bg'>
+                                    <Image className='tool-icon-img' src={WarehouseIcon} mode='aspectFit' />
+                                </View>
+                                <Text className='tool-name'>仓库管理</Text>
+                            </View>
+                            <View className='tool-item' onClick={handleCategory}>
+                                <View className='tool-icon-bg'>
+                                    <Image className='tool-icon-img' src={CategoryIcon} mode='aspectFit' />
+                                </View>
+                                <Text className='tool-name'>品类设置</Text>
+                            </View>
+                            <View className='tool-item' onClick={handleExport}>
+                                <View className='tool-icon-bg'>
+                                    <Image className='tool-icon-img' src={ExportIcon} mode='aspectFit' />
+                                </View>
+                                <Text className='tool-name'>导出报表</Text>
+                            </View>
                         </View>
                     </View>
+
+                    {/* 系统设置 */}
+                    <View className='section'>
+                        <Text className='section-title'>系统设置</Text>
+                        <View className='settings-list'>
+                            <View className='setting-item' onClick={handleCurrency}>
+                                <View className='item-left'>
+                                    <Image className='item-icon-img' src={CurrencyIcon} mode='aspectFit' />
+                                    <Text className='item-name'>汇率与币种设置</Text>
+                                </View>
+                                <View className='item-right'>
+                                    <Text className='item-desc'>CNY / SGD / TWD</Text>
+                                    <Text className='arrow'>›</Text>
+                                </View>
+                            </View>
+
+                            <View className='setting-item' onClick={handleSync}>
+                                <View className='item-left'>
+                                    <Image className='item-icon-img' src={SyncIcon} mode='aspectFit' />
+                                    <Text className='item-name'>手动同步云端数据</Text>
+                                </View>
+                                <View className='item-right'>
+                                    <Text className='arrow'>›</Text>
+                                </View>
+                            </View>
+
+                            <View className='setting-item' onClick={handlePrivacy}>
+                                <View className='item-left'>
+                                    <Image className='item-icon-img' src={PrivacyIcon} mode='aspectFit' />
+                                    <Text className='item-name'>数据安全与隐私协议</Text>
+                                </View>
+                                <View className='item-right'>
+                                    <Text className='arrow'>›</Text>
+                                </View>
+                            </View>
+
+                            {process.env.TARO_ENV === 'weapp' && (
+                                <View className='setting-item' onClick={handleShowOpenid}>
+                                    <View className='item-left'>
+                                        <Image className='item-icon-img' src={PrivacyIcon} mode='aspectFit' />
+                                        <Text className='item-name'>用户标识</Text>
+                                    </View>
+                                    <View className='item-right'>
+                                        <Text className='item-desc'>{openid ? '点击查看' : '加载中...'}</Text>
+                                        <Text className='arrow'>›</Text>
+                                    </View>
+                                </View>
+                            )}
+
+                            <View className='setting-item' onClick={handleHelp}>
+                                <View className='item-left'>
+                                    <Image className='item-icon-img' src={HelpIcon} mode='aspectFit' />
+                                    <Text className='item-name'>使用帮助与反馈</Text>
+                                </View>
+                                <View className='item-right'>
+                                    <Text className='arrow'>›</Text>
+                                </View>
+                            </View>
+
+                            <View className='setting-item last' onClick={handleShare}>
+                                <View className='item-left'>
+                                    <Image className='item-icon-img' src={ShareIcon} mode='aspectFit' />
+                                    <Text className='item-name'>推荐给同行</Text>
+                                </View>
+                                <View className='item-right'>
+                                    <Text className='arrow'>›</Text>
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+
+                    {/* 底部按钮 */}
+                    <View className='logout-btn' onClick={handleLogout}>
+                        <Image className='logout-icon-img' src={LogoutIcon} mode='aspectFit' />
+                        <Text className='logout-text'>退出登录</Text>
+                    </View>
+
+                    <View className='version-info'>
+                        <Text>JEWELRY INVENTORY PRO V2.1.0</Text>
+                    </View>
+
+                    <View style={{ height: '200px' }} />
                 </View>
-            </View>
-
-            {/* 底部按钮 */}
-            <View className='logout-btn' onClick={handleLogout}>
-                <Image className='logout-icon-img' src={LogoutIcon} mode='aspectFit' />
-                <Text className='logout-text'>退出登录</Text>
-            </View>
-
-            <View className='version-info'>
-                <Text>JEWELRY INVENTORY PRO V2.1.0</Text>
-            </View>
+            </ScrollView>
 
             <QuickAddSheet
                 visible={showQuickAdd}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { View, Text, Image } from '@tarojs/components'
+import { View, Text, Image, ScrollView } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { inventoryService, transactionService } from '../../services/cloud'
 import { InventoryItem, TransactionRecord } from '../../types'
@@ -82,109 +82,115 @@ export default function ProductDetail() {
 
     return (
         <View className='detail-page'>
-            {/* 商品图片 */}
-            <View className='detail-image'>
-                <Image src={item.image} mode='aspectFill' style={{ width: '100%', height: '100%' }} />
-            </View>
+            <ScrollView scrollY showScrollbar={false} className='detail-scroll'>
+                <View className='detail-scroll-inner'>
+                    {/* 商品图片 */}
+                    <View className='detail-image'>
+                        <Image src={item.image} mode='aspectFill' style={{ width: '100%', height: '100%' }} />
+                    </View>
 
-            {/* 基本信息 */}
-            <View className='detail-main'>
-                <View className='detail-header'>
-                    <View className='detail-title-area'>
-                        <Text className='detail-title'>{item.modelNumber}</Text>
-                        <View className='detail-tags'>
-                            <View className='tag tag-gray'>
-                                <Text>{item.category}</Text>
-                            </View>
-                            <View className='tag tag-pink'>
-                                <Text>{item.warehouse} 仓</Text>
-                            </View>
-                        </View>
-                    </View>
-                    <View className='detail-stock'>
-                        <Text className='stock-number'>{item.quantity}</Text>
-                        <Text className='stock-label'>当前存量</Text>
-                    </View>
-                </View>
-
-                {/* 价格卡片 */}
-                <View className='price-row'>
-                    <View className='price-card'>
-                        <Text className='price-label'>进价</Text>
-                        <Text className='price-value'>¥{item.costPrice}</Text>
-                    </View>
-                    <View className='price-card'>
-                        <Text className='price-label'>线上</Text>
-                        <Text className='price-value'>¥{item.onlinePrice}</Text>
-                    </View>
-                    <View className='price-card price-card-highlight'>
-                        <Text className='price-label' style={{ color: '#F9A8D4' }}>线下</Text>
-                        <Text className='price-value' style={{ color: '#DB2777' }}>¥{item.offlinePrice}</Text>
-                    </View>
-                </View>
-
-                {/* Tab切换 */}
-                <View className='tab-bar'>
-                    <View
-                        className={`tab-item ${activeTab === 'info' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('info')}
-                    >
-                        <Text>基本属性</Text>
-                    </View>
-                    <View
-                        className={`tab-item ${activeTab === 'history' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('history')}
-                    >
-                        <Text>变动明细</Text>
-                    </View>
-                </View>
-
-                {/* Tab内容 */}
-                {activeTab === 'info' && (
-                    <View className='info-list'>
-                        <View className='info-item'>
-                            <Text className='info-label'>⚙️ 规格 / 尺寸</Text>
-                            <Text className='info-value'>{item.specification}</Text>
-                        </View>
-                        <View className='info-item'>
-                            <Text className='info-label'>🎨 颜色 / 款式</Text>
-                            <Text className='info-value'>{item.color}</Text>
-                        </View>
-                    </View>
-                )}
-
-                {activeTab === 'history' && (
-                    <View className='history-list'>
-                        {records.length === 0 ? (
-                            <View className='empty' style={{ padding: '64px 0' }}>
-                                <Text className='empty-text'>暂无变动记录</Text>
-                            </View>
-                        ) : (
-                            records.map(rec => (
-                                <View key={rec._id} className='history-item'>
-                                    <View className='history-left'>
-                                        <View className={`history-badge ${rec.type}`}>
-                                            <Text>{rec.type === 'inbound' ? '入' : '出'}</Text>
-                                        </View>
-                                        <View className='history-info'>
-                                            <Text className='history-method'>{rec.method}</Text>
-                                            <Text className='history-date'>{rec.date}</Text>
-                                        </View>
+                    {/* 基本信息 */}
+                    <View className='detail-main'>
+                        <View className='detail-header'>
+                            <View className='detail-title-area'>
+                                <Text className='detail-title'>{item.modelNumber}</Text>
+                                <View className='detail-tags'>
+                                    <View className='tag tag-gray'>
+                                        <Text>{item.category}</Text>
                                     </View>
-                                    <View className='history-right'>
-                                        <Text className={`history-qty ${rec.type}`}>
-                                            {rec.type === 'inbound' ? '+' : '-'}{rec.quantity}
-                                        </Text>
-                                        {rec.finalAmount !== undefined && (
-                                            <Text className='history-amount'>{rec.currency} {rec.finalAmount}</Text>
-                                        )}
+                                    <View className='tag tag-pink'>
+                                        <Text>{item.warehouse} 仓</Text>
                                     </View>
                                 </View>
-                            ))
+                            </View>
+                            <View className='detail-stock'>
+                                <Text className='stock-number'>{item.quantity}</Text>
+                                <Text className='stock-label'>当前存量</Text>
+                            </View>
+                        </View>
+
+                        {/* 价格卡片 */}
+                        <View className='price-row'>
+                            <View className='price-card'>
+                                <Text className='price-label'>进价</Text>
+                                <Text className='price-value'>¥{item.costPrice}</Text>
+                            </View>
+                            <View className='price-card'>
+                                <Text className='price-label'>线上</Text>
+                                <Text className='price-value'>¥{item.onlinePrice}</Text>
+                            </View>
+                            <View className='price-card price-card-highlight'>
+                                <Text className='price-label' style={{ color: '#F9A8D4' }}>线下</Text>
+                                <Text className='price-value' style={{ color: '#DB2777' }}>¥{item.offlinePrice}</Text>
+                            </View>
+                        </View>
+
+                        {/* Tab切换 */}
+                        <View className='tab-bar'>
+                            <View
+                                className={`tab-item ${activeTab === 'info' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('info')}
+                            >
+                                <Text>基本属性</Text>
+                            </View>
+                            <View
+                                className={`tab-item ${activeTab === 'history' ? 'active' : ''}`}
+                                onClick={() => setActiveTab('history')}
+                            >
+                                <Text>变动明细</Text>
+                            </View>
+                        </View>
+
+                        {/* Tab内容 */}
+                        {activeTab === 'info' && (
+                            <View className='info-list'>
+                                <View className='info-item'>
+                                    <Text className='info-label'>⚙️ 规格 / 尺寸</Text>
+                                    <Text className='info-value'>{item.specification}</Text>
+                                </View>
+                                <View className='info-item'>
+                                    <Text className='info-label'>🎨 颜色 / 款式</Text>
+                                    <Text className='info-value'>{item.color}</Text>
+                                </View>
+                            </View>
+                        )}
+
+                        {activeTab === 'history' && (
+                            <View className='history-list'>
+                                {records.length === 0 ? (
+                                    <View className='empty' style={{ padding: '64px 0' }}>
+                                        <Text className='empty-text'>暂无变动记录</Text>
+                                    </View>
+                                ) : (
+                                    records.map(rec => (
+                                        <View key={rec._id} className='history-item'>
+                                            <View className='history-left'>
+                                                <View className={`history-badge ${rec.type}`}>
+                                                    <Text>{rec.type === 'inbound' ? '入' : '出'}</Text>
+                                                </View>
+                                                <View className='history-info'>
+                                                    <Text className='history-method'>{rec.method}</Text>
+                                                    <Text className='history-date'>{rec.date}</Text>
+                                                </View>
+                                            </View>
+                                            <View className='history-right'>
+                                                <Text className={`history-qty ${rec.type}`}>
+                                                    {rec.type === 'inbound' ? '+' : '-'}{rec.quantity}
+                                                </Text>
+                                                {rec.finalAmount !== undefined && (
+                                                    <Text className='history-amount'>{rec.currency} {rec.finalAmount}</Text>
+                                                )}
+                                            </View>
+                                        </View>
+                                    ))
+                                )}
+                            </View>
                         )}
                     </View>
-                )}
-            </View>
+
+                    <View style={{ height: '32px' }} />
+                </View>
+            </ScrollView>
 
             {/* 底部按钮 */}
             <View className='detail-footer'>

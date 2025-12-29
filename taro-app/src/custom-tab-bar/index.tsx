@@ -25,17 +25,33 @@ const tabs = [
 
 interface TabBarState {
     selected: number
+    hidden: boolean
 }
 
 export default class CustomTabBar extends Component<{}, TabBarState> {
-    state: TabBarState = { selected: this.getSelectedByRoute() }
+    state: TabBarState = { selected: this.getSelectedByRoute(), hidden: false }
 
     componentDidMount() {
         this.syncSelectedByRoute()
+        Taro.eventCenter.on('showQuickAddSheet', this.hideTabBar)
+        Taro.eventCenter.on('hideQuickAddSheet', this.showTabBar)
+    }
+
+    componentWillUnmount() {
+        Taro.eventCenter.off('showQuickAddSheet', this.hideTabBar)
+        Taro.eventCenter.off('hideQuickAddSheet', this.showTabBar)
     }
 
     componentDidShow() {
         this.syncSelectedByRoute()
+    }
+
+    hideTabBar = () => {
+        this.setState({ hidden: true })
+    }
+
+    showTabBar = () => {
+        this.setState({ hidden: false })
     }
 
     getSelectedByRoute(): number {
@@ -79,7 +95,9 @@ export default class CustomTabBar extends Component<{}, TabBarState> {
     }
 
     render() {
-        const { selected } = this.state
+        const { selected, hidden } = this.state
+
+        if (hidden) return null
 
         return (
             <View className='custom-tabbar-wrapper'>

@@ -114,7 +114,7 @@ export default function Records() {
 
     return (
         <View className='page-container'>
-            <ScrollView scrollY className='scroll-content'>
+            <ScrollView scrollY showScrollbar={false} className='scroll-content'>
                 <View className='inner-content'>
                     {/* 搜索框 */}
                     <View className='search-box'>

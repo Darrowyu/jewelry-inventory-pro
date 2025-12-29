@@ -11,6 +11,9 @@ import NotificationIcon from '../../assets/icons/notification.svg'
 import LocationIcon from '../../assets/icons/location.svg'
 import './index.scss'
 
+// 默认占位图（使用 base64 避免网络请求）
+const PLACEHOLDER_IMG = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCIgZmlsbD0iI0Y5RkFGQiI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiLz48cGF0aCBkPSJNNjAgNzBIMjBWNjBINjBWNzBaTTkwIDcwSDcwVjYwSDkwVjcwWk0xMjAgNzBIMTAwVjYwSDEyMFY3MFpNNjAgMTAwSDIwVjkwSDYwVjEwMFpNOTAgMTAwSDcwVjkwSDkwVjEwMFpNMTIwIDEwMEgxMDBWOTBIMTIwVjEwMFoiIGZpbGw9IiNFNUU3RUIiIG9wYWNpdHk9IjAuNSIvPjwvc3ZnPg=='
+
 export default function Index() {
   const [inventory, setInventory] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -85,7 +88,7 @@ export default function Index() {
 
   return (
     <View className='page-container'>
-      <ScrollView scrollY className='scroll-content'>
+      <ScrollView scrollY showScrollbar={false} className='scroll-content'>
         <View className='inner-content'>
           {/* 顶部 Header */}
           <View className='header'>
@@ -163,8 +166,10 @@ export default function Index() {
                 <View key={item._id} className='inventory-card' onClick={() => handleItemClick(item._id!)}>
                   <Image
                     className='card-img'
-                    src={item.image || 'https://via.placeholder.com/150'}
+                    src={item.image || PLACEHOLDER_IMG}
                     mode='aspectFill'
+                    lazyLoad
+                    fadeIn
                   />
                   <View className='card-info'>
                     <View className='info-main'>

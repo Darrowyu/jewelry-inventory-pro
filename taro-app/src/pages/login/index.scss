@@ -1,6 +1,17 @@
 .login-page {
-    min-height: 100vh;
+    height: 100vh;
     background: linear-gradient(180deg, #FDF2F8 0%, #FFFFFF 50%);
+    overflow: hidden;
+}
+
+.scroll-content {
+    height: 100vh;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+.inner-content {
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     padding: 0 48px;
@@ -17,18 +28,18 @@
 .logo-container {
     width: 160px;
     height: 160px;
-    background: linear-gradient(135deg, #EC4899 0%, #F472B6 100%);
-    border-radius: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 16px 48px rgba(236, 72, 153, 0.3);
     margin-bottom: 32px;
 }
 
 .logo-icon {
-    font-size: 80px;
+    width: 100px;
+    height: 100px;
 }
+
+
 
 .app-name {
     font-size: 44px;

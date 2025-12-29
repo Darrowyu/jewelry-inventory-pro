@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { View, Text, Input, Picker } from '@tarojs/components'
+import { View, Text, Input, Picker, ScrollView } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { transactionService, inventoryService } from '../../services/cloud'
 import { InventoryItem, Currency, OutboundType, InboundType, TransactionRecord, ReturnStatus } from '../../types'
@@ -193,224 +193,230 @@ export default function AddTransaction() {
 
     return (
         <View className='add-page'>
-            {/* 类型切换 */}
-            <View className='type-tabs'>
-                <View
-                    className={`type-tab ${type === 'outbound' ? 'active outbound' : ''}`}
-                    onClick={() => setType('outbound')}
-                >
-                    <Text>出库</Text>
-                </View>
-                <View
-                    className={`type-tab ${type === 'inbound' ? 'active inbound' : ''}`}
-                    onClick={() => setType('inbound')}
-                >
-                    <Text>入库</Text>
-                </View>
-            </View>
-
-            {/* 基本信息 */}
-            <View className='form-section'>
-                <Text className='section-title'>基本信息</Text>
-
-                {/* 选择商品 */}
-                <View className='form-item'>
-                    <Text className='form-label'>商品 *</Text>
-                    <Picker
-                        mode='selector'
-                        range={inventory.map(i => `${i.modelNumber} - ${i.color} (库存:${i.quantity})`)}
-                        onChange={(e) => updateField('itemId', inventory[Number(e.detail.value)]._id || '')}
-                    >
-                        <View className='form-picker'>
-                            <Text>
-                                {selectedItem
-                                    ? `${selectedItem.modelNumber} - ${selectedItem.color}`
-                                    : '请选择商品'}
-                            </Text>
-                            <Text className='picker-arrow'>›</Text>
-                        </View>
-                    </Picker>
-                </View>
-
-                {/* 出入库方式 */}
-                <View className='form-item'>
-                    <Text className='form-label'>{type === 'outbound' ? '出库方式' : '入库方式'} *</Text>
-                    <Picker
-                        mode='selector'
-                        range={methodOptions.map(o => o.label)}
-                        onChange={(e) => handleMethodChange(methodOptions[Number(e.detail.value)].value)}
-                    >
-                        <View className='form-picker'>
-                            <Text>
-                                {form.method
-                                    ? methodOptions.find(o => o.value === form.method)?.label
-                                    : '请选择方式'}
-                            </Text>
-                            <Text className='picker-arrow'>›</Text>
-                        </View>
-                    </Picker>
-                </View>
-
-                {/* 退货：关联出库记录 */}
-                {type === 'inbound' && form.method === InboundType.RETURN && (
-                    <>
-                        <View className='form-item'>
-                            <Text className='form-label'>关联出库记录（可选）</Text>
-                            <Picker
-                                mode='selector'
-                                range={['不关联', ...outboundRecords.map(r =>
-                                    `${r.date} - ${r.method} x${r.quantity}`
-                                )]}
-                                onChange={(e) => {
-                                    const index = Number(e.detail.value)
-                                    if (index === 0) {
-                                        updateField('linkedTransactionId', '')
-                                    } else {
-                                        handleLinkedRecordChange(outboundRecords[index - 1]._id || '')
-                                    }
-                                }}
-                            >
-                                <View className='form-picker'>
-                                    <Text>
-                                        {form.linkedTransactionId
-                                            ? outboundRecords.find(r => r._id === form.linkedTransactionId)?.date
-                                            : '选择出库记录（数据可追溯）'}
-                                    </Text>
-                                    <Text className='picker-arrow'>›</Text>
-                                </View>
-                            </Picker>
-                        </View>
-
-                        <View className='form-item'>
-                            <Text className='form-label'>退货状态 *</Text>
-                            <Picker
-                                mode='selector'
-                                range={RETURN_STATUS_OPTIONS.map(o => o.label)}
-                                onChange={(e) => updateField('returnStatus', RETURN_STATUS_OPTIONS[Number(e.detail.value)].value)}
-                            >
-                                <View className='form-picker'>
-                                    <Text>
-                                        {form.returnStatus || '请选择退货状态'}
-                                    </Text>
-                                    <Text className='picker-arrow'>›</Text>
-                                </View>
-                            </Picker>
-                        </View>
-
-                        <View className='form-item'>
-                            <Text className='form-label'>退货来源</Text>
-                            <Input
-                                className='form-input'
-                                placeholder='如：Shopee新加坡退货'
-                                value={form.source}
-                                onInput={(e) => updateField('source', e.detail.value)}
-                            />
-                        </View>
-                    </>
-                )}
-
-                {/* 采购：来源 */}
-                {type === 'inbound' && form.method === InboundType.PROCUREMENT && (
-                    <View className='form-item'>
-                        <Text className='form-label'>采购来源</Text>
-                        <Input
-                            className='form-input'
-                            placeholder='如：1688、义乌市场'
-                            value={form.source}
-                            onInput={(e) => updateField('source', e.detail.value)}
-                        />
-                    </View>
-                )}
-
-                {/* 数量 */}
-                <View className='form-item'>
-                    <Text className='form-label'>数量 *</Text>
-                    <Input
-                        className='form-input'
-                        type='number'
-                        placeholder='1'
-                        value={String(form.quantity)}
-                        onInput={(e) => updateField('quantity', Number(e.detail.value) || 1)}
-                    />
-                </View>
-            </View>
-
-            {/* 金额信息（出库时显示） */}
-            {type === 'outbound' && (
-                <View className='form-section'>
-                    <Text className='section-title'>金额信息</Text>
-
-                    <View className='form-item'>
-                        <Text className='form-label'>币种</Text>
-                        <Picker
-                            mode='selector'
-                            range={CURRENCY_OPTIONS.map(o => o.label)}
-                            value={CURRENCY_OPTIONS.findIndex(o => o.value === form.currency)}
-                            onChange={(e) => updateField('currency', CURRENCY_OPTIONS[Number(e.detail.value)].value)}
+            <ScrollView scrollY showScrollbar={false} className='scroll-content'>
+                <View className='inner-content'>
+                    {/* 类型切换 */}
+                    <View className='type-tabs'>
+                        <View
+                            className={`type-tab ${type === 'outbound' ? 'active outbound' : ''}`}
+                            onClick={() => setType('outbound')}
                         >
-                            <View className='form-picker'>
-                                <Text>{CURRENCY_OPTIONS.find(o => o.value === form.currency)?.label}</Text>
-                                <Text className='picker-arrow'>›</Text>
+                            <Text>出库</Text>
+                        </View>
+                        <View
+                            className={`type-tab ${type === 'inbound' ? 'active inbound' : ''}`}
+                            onClick={() => setType('inbound')}
+                        >
+                            <Text>入库</Text>
+                        </View>
+                    </View>
+
+                    {/* 基本信息 */}
+                    <View className='form-section'>
+                        <Text className='section-title'>基本信息</Text>
+
+                        {/* 选择商品 */}
+                        <View className='form-item'>
+                            <Text className='form-label'>商品 *</Text>
+                            <Picker
+                                mode='selector'
+                                range={inventory.map(i => `${i.modelNumber} - ${i.color} (库存:${i.quantity})`)}
+                                onChange={(e) => updateField('itemId', inventory[Number(e.detail.value)]._id || '')}
+                            >
+                                <View className='form-picker'>
+                                    <Text>
+                                        {selectedItem
+                                            ? `${selectedItem.modelNumber} - ${selectedItem.color}`
+                                            : '请选择商品'}
+                                    </Text>
+                                    <Text className='picker-arrow'>›</Text>
+                                </View>
+                            </Picker>
+                        </View>
+
+                        {/* 出入库方式 */}
+                        <View className='form-item'>
+                            <Text className='form-label'>{type === 'outbound' ? '出库方式' : '入库方式'} *</Text>
+                            <Picker
+                                mode='selector'
+                                range={methodOptions.map(o => o.label)}
+                                onChange={(e) => handleMethodChange(methodOptions[Number(e.detail.value)].value)}
+                            >
+                                <View className='form-picker'>
+                                    <Text>
+                                        {form.method
+                                            ? methodOptions.find(o => o.value === form.method)?.label
+                                            : '请选择方式'}
+                                    </Text>
+                                    <Text className='picker-arrow'>›</Text>
+                                </View>
+                            </Picker>
+                        </View>
+
+                        {/* 退货：关联出库记录 */}
+                        {type === 'inbound' && form.method === InboundType.RETURN && (
+                            <>
+                                <View className='form-item'>
+                                    <Text className='form-label'>关联出库记录（可选）</Text>
+                                    <Picker
+                                        mode='selector'
+                                        range={['不关联', ...outboundRecords.map(r =>
+                                            `${r.date} - ${r.method} x${r.quantity}`
+                                        )]}
+                                        onChange={(e) => {
+                                            const index = Number(e.detail.value)
+                                            if (index === 0) {
+                                                updateField('linkedTransactionId', '')
+                                            } else {
+                                                handleLinkedRecordChange(outboundRecords[index - 1]._id || '')
+                                            }
+                                        }}
+                                    >
+                                        <View className='form-picker'>
+                                            <Text>
+                                                {form.linkedTransactionId
+                                                    ? outboundRecords.find(r => r._id === form.linkedTransactionId)?.date
+                                                    : '选择出库记录（数据可追溯）'}
+                                            </Text>
+                                            <Text className='picker-arrow'>›</Text>
+                                        </View>
+                                    </Picker>
+                                </View>
+
+                                <View className='form-item'>
+                                    <Text className='form-label'>退货状态 *</Text>
+                                    <Picker
+                                        mode='selector'
+                                        range={RETURN_STATUS_OPTIONS.map(o => o.label)}
+                                        onChange={(e) => updateField('returnStatus', RETURN_STATUS_OPTIONS[Number(e.detail.value)].value)}
+                                    >
+                                        <View className='form-picker'>
+                                            <Text>
+                                                {form.returnStatus || '请选择退货状态'}
+                                            </Text>
+                                            <Text className='picker-arrow'>›</Text>
+                                        </View>
+                                    </Picker>
+                                </View>
+
+                                <View className='form-item'>
+                                    <Text className='form-label'>退货来源</Text>
+                                    <Input
+                                        className='form-input'
+                                        placeholder='如：Shopee新加坡退货'
+                                        value={form.source}
+                                        onInput={(e) => updateField('source', e.detail.value)}
+                                    />
+                                </View>
+                            </>
+                        )}
+
+                        {/* 采购：来源 */}
+                        {type === 'inbound' && form.method === InboundType.PROCUREMENT && (
+                            <View className='form-item'>
+                                <Text className='form-label'>采购来源</Text>
+                                <Input
+                                    className='form-input'
+                                    placeholder='如：1688、义乌市场'
+                                    value={form.source}
+                                    onInput={(e) => updateField('source', e.detail.value)}
+                                />
                             </View>
-                        </Picker>
-                    </View>
+                        )}
 
-                    <View className='form-row'>
-                        <View className='form-item half'>
-                            <Text className='form-label'>售价</Text>
+                        {/* 数量 */}
+                        <View className='form-item'>
+                            <Text className='form-label'>数量 *</Text>
                             <Input
                                 className='form-input'
-                                type='digit'
-                                placeholder='0.00'
-                                value={form.amount ? String(form.amount) : ''}
-                                onInput={(e) => updateField('amount', Number(e.detail.value) || 0)}
-                            />
-                        </View>
-                        <View className='form-item half'>
-                            <Text className='form-label'>优惠 (±)</Text>
-                            <Input
-                                className='form-input'
-                                type='digit'
-                                placeholder='0'
-                                value={form.discount ? String(form.discount) : ''}
-                                onInput={(e) => updateField('discount', Number(e.detail.value) || 0)}
+                                type='number'
+                                placeholder='1'
+                                value={String(form.quantity)}
+                                onInput={(e) => updateField('quantity', Number(e.detail.value) || 1)}
                             />
                         </View>
                     </View>
 
-                    <View className='amount-summary'>
-                        <Text className='summary-label'>最终金额</Text>
-                        <Text className='summary-value'>
-                            {CURRENCY_SYMBOLS[form.currency]} {finalAmount.toFixed(2)}
-                        </Text>
+                    {/* 金额信息（出库时显示） */}
+                    {type === 'outbound' && (
+                        <View className='form-section'>
+                            <Text className='section-title'>金额信息</Text>
+
+                            <View className='form-item'>
+                                <Text className='form-label'>币种</Text>
+                                <Picker
+                                    mode='selector'
+                                    range={CURRENCY_OPTIONS.map(o => o.label)}
+                                    value={CURRENCY_OPTIONS.findIndex(o => o.value === form.currency)}
+                                    onChange={(e) => updateField('currency', CURRENCY_OPTIONS[Number(e.detail.value)].value)}
+                                >
+                                    <View className='form-picker'>
+                                        <Text>{CURRENCY_OPTIONS.find(o => o.value === form.currency)?.label}</Text>
+                                        <Text className='picker-arrow'>›</Text>
+                                    </View>
+                                </Picker>
+                            </View>
+
+                            <View className='form-row'>
+                                <View className='form-item half'>
+                                    <Text className='form-label'>售价</Text>
+                                    <Input
+                                        className='form-input'
+                                        type='digit'
+                                        placeholder='0.00'
+                                        value={form.amount ? String(form.amount) : ''}
+                                        onInput={(e) => updateField('amount', Number(e.detail.value) || 0)}
+                                    />
+                                </View>
+                                <View className='form-item half'>
+                                    <Text className='form-label'>优惠 (±)</Text>
+                                    <Input
+                                        className='form-input'
+                                        type='digit'
+                                        placeholder='0'
+                                        value={form.discount ? String(form.discount) : ''}
+                                        onInput={(e) => updateField('discount', Number(e.detail.value) || 0)}
+                                    />
+                                </View>
+                            </View>
+
+                            <View className='amount-summary'>
+                                <Text className='summary-label'>最终金额</Text>
+                                <Text className='summary-value'>
+                                    {CURRENCY_SYMBOLS[form.currency]} {finalAmount.toFixed(2)}
+                                </Text>
+                            </View>
+                        </View>
+                    )}
+
+                    {/* 备注 */}
+                    <View className='form-section'>
+                        <View className='form-item'>
+                            <Text className='form-label'>备注</Text>
+                            <Input
+                                className='form-input'
+                                placeholder='可选'
+                                value={form.note}
+                                onInput={(e) => updateField('note', e.detail.value)}
+                            />
+                        </View>
                     </View>
-                </View>
-            )}
 
-            {/* 备注 */}
-            <View className='form-section'>
-                <View className='form-item'>
-                    <Text className='form-label'>备注</Text>
-                    <Input
-                        className='form-input'
-                        placeholder='可选'
-                        value={form.note}
-                        onInput={(e) => updateField('note', e.detail.value)}
-                    />
-                </View>
-            </View>
+                    {/* 提交按钮 */}
+                    <View className='form-footer'>
+                        <View
+                            className={`btn ${type === 'outbound' ? 'btn-pink' : 'btn-green'}`}
+                            onClick={handleSubmit}
+                        >
+                            <Text style={{ color: '#FFFFFF', fontSize: 28, fontWeight: 700 }}>
+                                {loading ? '保存中...' : (type === 'outbound' ? '确认出库' : '确认入库')}
+                            </Text>
+                        </View>
+                    </View>
 
-            {/* 提交按钮 */}
-            <View className='form-footer'>
-                <View
-                    className={`btn ${type === 'outbound' ? 'btn-pink' : 'btn-green'}`}
-                    onClick={handleSubmit}
-                >
-                    <Text style={{ color: '#FFFFFF', fontSize: 28, fontWeight: 700 }}>
-                        {loading ? '保存中...' : (type === 'outbound' ? '确认出库' : '确认入库')}
-                    </Text>
+                    <View style={{ height: '120px' }} />
                 </View>
-            </View>
+            </ScrollView>
         </View>
     )
 }

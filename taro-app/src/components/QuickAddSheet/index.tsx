@@ -113,13 +113,17 @@ export default function QuickAddSheet({ visible, onClose, onSuccess }: QuickAddS
 
     const handleClose = () => {
         resetForm()
+        Taro.eventCenter.trigger('hideQuickAddSheet')
         onClose()
     }
 
     if (!visible) return null
 
     return (
-        <View className='sheet-overlay' onClick={handleClose}>
+        <View className='sheet-overlay'>
+            {/* 毛玻璃遮罩层 */}
+            <View className='sheet-backdrop' onClick={handleClose} />
+
             <View className='sheet-container' onClick={e => e.stopPropagation()}>
                 {/* 头部 */}
                 <View className='sheet-header'>
@@ -129,7 +133,7 @@ export default function QuickAddSheet({ visible, onClose, onSuccess }: QuickAddS
                     </View>
                 </View>
 
-                <ScrollView scrollY className='sheet-body'>
+                <ScrollView scrollY showScrollbar={false} className='sheet-body'>
                     {/* 类型切换 */}
                     <View className='type-switcher'>
                         <View

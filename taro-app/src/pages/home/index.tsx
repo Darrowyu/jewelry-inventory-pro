@@ -141,7 +141,7 @@ export default function Home() {
 
     return (
         <View className='home-container'>
-            <ScrollView scrollY className='home-scroll'>
+            <ScrollView scrollY showScrollbar={false} className='home-scroll'>
                 <View className='home-content'>
                     {/* 今日概览卡片 */}
                     <View className='overview-card'>
