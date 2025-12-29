@@ -167,7 +167,8 @@ exports.main = async (event, context) => {
                 }
 
                 // 更新 openid 和最后登录时间
-                const updateData = { lastLoginAt: new Date().toISOString() }
+                const loginTime = new Date().toISOString()
+                const updateData = { lastLoginAt: loginTime }
                 if (openid && !user.openid) {
                     updateData.openid = openid
                 }
@@ -182,7 +183,8 @@ exports.main = async (event, context) => {
                             nickname: user.nickname,
                             role: user.role,
                             createdAt: user.createdAt,
-                            avatarUrl: user.avatarUrl || ''
+                            avatarUrl: user.avatarUrl || '',
+                            tokenIssuedAt: loginTime
                         }
                     }
                 }
@@ -192,6 +194,44 @@ exports.main = async (event, context) => {
             case 'logout': {
                 // 仅清除本地状态，不改变用户数据
                 return { success: true, data: { message: '已退出登录' } }
+            }
+
+            // 验证会话有效性（检查密码是否被重置）
+            case 'validateSession': {
+                const { userId, tokenIssuedAt } = data || {}
+
+                if (!userId || !tokenIssuedAt) {
+                    return { success: false, error: '参数不完整', requireRelogin: true }
+                }
+
+                try {
+                    const userRes = await usersCollection.doc(userId).get()
+                    if (!userRes.data) {
+                        return { success: false, error: '用户不存在', requireRelogin: true }
+                    }
+
+                    const user = userRes.data
+                    if (user.status !== 'active') {
+                        return { success: false, error: '账号已被禁用', requireRelogin: true }
+                    }
+
+                    // 检查密码是否在登录后被重置
+                    if (user.passwordResetAt) {
+                        const resetTime = new Date(user.passwordResetAt).getTime()
+                        const loginTime = new Date(tokenIssuedAt).getTime()
+                        if (resetTime > loginTime) {
+                            return {
+                                success: false,
+                                error: '密码已被管理员重置，请重新登录',
+                                requireRelogin: true
+                            }
+                        }
+                    }
+
+                    return { success: true, data: { valid: true } }
+                } catch (err) {
+                    return { success: false, error: '验证失败', requireRelogin: true }
+                }
             }
 
             // 更新用户头像
@@ -239,8 +279,9 @@ exports.main = async (event, context) => {
                     return { success: false, error: '用户名或密码错误' }
                 }
 
+                const loginTime = new Date().toISOString()
                 await usersCollection.doc(user._id).update({
-                    data: { lastLoginAt: new Date().toISOString() }
+                    data: { lastLoginAt: loginTime }
                 })
 
                 return {
@@ -250,7 +291,8 @@ exports.main = async (event, context) => {
                             id: user._id,
                             username: user.username,
                             nickname: user.nickname,
-                            role: user.role
+                            role: user.role,
+                            tokenIssuedAt: loginTime
                         }
                     }
                 }
@@ -481,12 +523,14 @@ exports.main = async (event, context) => {
 
                 const salt = generateSalt()
                 const passwordHash = hashPassword(newPassword, salt)
+                const resetTime = new Date().toISOString()
 
                 await usersCollection.doc(userId).update({
                     data: {
                         salt,
                         passwordHash,
-                        updatedAt: new Date().toISOString()
+                        passwordResetAt: resetTime,
+                        updatedAt: resetTime
                     }
                 })
                 return { success: true, data: { message: '密码重置成功' } }
